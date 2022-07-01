@@ -1,10 +1,13 @@
+package TaskUtil;
+
 import Tasks.Epic;
 import Tasks.SubTask;
 import Tasks.Task;
 
 import java.util.*;
 
-public class TaskManager {
+public class TaskManager { /*Поместил класс в отдельный пакет, изменил метод по сохранению Эпиков, изменил логику
+                             обновления статуса эпика*/
     private HashMap<Integer, Task> tasks = new HashMap<>();
     private HashMap<Integer, Epic> epics = new HashMap<>();
     private HashMap<Integer, SubTask> subTasks = new HashMap<>();
@@ -25,25 +28,40 @@ public class TaskManager {
 
     //                                      МЕТОДЫ ПО ПОЛУЧЕНИЯ СПИСКА ЗАДАЧ ОПРЕДЕЛЕННОГО ТИПА
 
-    public HashMap getTasksList() {
-        for (Integer integer : tasks.keySet()) {
-            System.out.println(tasks.get(integer).getTaskType() + " ID - " + integer);
-            System.out.println(tasks.get(integer).toString());
+    public HashMap<Integer, Task> getTasksList() {
+        if (tasks.isEmpty()) {
+            return null;
+        } else {
+            return tasks;
         }
     }
 
-    public void getEpicsList() {
-        for (Integer integer : epics.keySet()) {
-            System.out.println(epics.get(integer).getTaskType() + " ID - " + integer);
-            System.out.println(epics.get(integer).toString());
+    public HashMap<Integer, Epic> getEpicsList() {
+        if (epics.isEmpty()) {
+            return null;
+        } else {
+            return epics;
         }
     }
 
-    public void getSubTasksList() {
+    public HashMap<Integer, SubTask> getSubTasksList() {
+        if (subTasks.isEmpty()) {
+            return null;
+        } else {
+            return subTasks;
+        }
+    }
+
+    //                                  ПОЛУЧЕНИЕ ВСЕХ САБТАСКОВ НУЖНОГО ЭПИКА
+
+    public ArrayList<SubTask> getAllEpicsSubtasks(int epicId) {
+        ArrayList<SubTask> subTasksWithCurrentEpicId = new ArrayList<>();
         for (Integer integer : subTasks.keySet()) {
-            System.out.println(subTasks.get(integer).getTaskType() + " ID - " + integer);
-            System.out.println(subTasks.get(integer).toString());
+            if (subTasks.get(integer).getEpicsId() == epicId) {
+                subTasksWithCurrentEpicId.add(subTasks.get(integer));
+            }
         }
+        return subTasksWithCurrentEpicId;
     }
 
     //                                   МЕТОДЫ ПО ДОБАВЛЕНИЮ ЗАДАЧ
@@ -55,6 +73,7 @@ public class TaskManager {
 
     public void addNewEpic(Epic epic) {
         epic.setId(counter++);
+        epic.setStatus(Task.Status.NEW);
         epics.put(epic.getId(), epic);
     }
 
@@ -63,10 +82,8 @@ public class TaskManager {
             subTask.setEpicsId(epicId);
             subTask.setId(counter);
             subTasks.put(counter++, subTask);
-            epics.get(epicId).setSubTaskNumbers(subTask.getId());
         }
     }
-
 
     //                                      МЕТОДЫ ПО УДАЛЕНИЮ ВСЕХ ЗАДАЧ
 
@@ -85,114 +102,132 @@ public class TaskManager {
             epicsIds.add(subTasks.get(integer).getEpicsId());
         }
         for (Integer integer : epicsIds) {
-            epics.get(integer).setStatus("NEW");
+            updateEpicStatus(integer);// потому просто обновлю его статус на NEW
         }
+
     }
 
     //                            МЕТОДЫ ДЛЯ ПОЛУЧЕНИЯ ИНФОРМАЦИИ О ЗАДАЧЕ ПО ИДЕНТИФИКАТОРУ
 
-    public String getTaskById(int id) {
-        return tasks.get(id).toString();
+    public Task getTaskById(int id) {
+        return tasks.getOrDefault(id, null); // Идея сама предложила на это поменять.
     }
 
-    public String getEpicByIdentifier(int id) {
-        return epics.get(id).toString();
+    public Epic getEpicByIdentifier(int id) {
+        return epics.getOrDefault(id, null);
     }
 
-    public String getSubTaskById(int id) {
-        return subTasks.get(id).toString();
+    public SubTask getSubTaskById(int id) {
+        return subTasks.getOrDefault(id, null);
     }
 
     //                            МЕТОДЫ ДЛЯ УДАЛЕНИЯ ЗАДАЧ ПО ИДЕНТИФИКАТОРУ
 
     public void removeTaskByIdentifier(int id) {
-        tasks.remove(id);
+        if (tasks.containsKey(id)) {
+            tasks.remove(id);
+        } else {
+            System.out.println("Задачи с таким ID нет в программе.");
+        }
     }
 
     public void removeEpicByIdentifier(int id) {  /*Метод вместе с эпиком удаляет сабтаски, у которых Id эпика - это id
                                                     удаляемого эпика. Посчитал нужным сделать так, потому что как мне
                                                     кажется, не может быть сабтасков без эпика.*/
-        ArrayList<Integer> subTasksIds = new ArrayList<>();
-        for (Integer integer : subTasks.keySet()) {
-            if (subTasks.get(integer).getEpicsId() == id) {
-                subTasksIds.add(integer);
+        if (epics.containsKey(id)) {
+            ArrayList<Integer> subTasksIds = new ArrayList<>();
+            for (Integer integer : subTasks.keySet()) {
+                if (subTasks.get(integer).getEpicsId() == id) {
+                    subTasksIds.add(integer);
+                }
             }
+            for (Integer integer : subTasksIds) {
+                subTasks.remove(integer);
+            }
+            epics.remove(id);
+        } else {
+            System.out.println("Эпика с таким ID нет в программе.");
         }
-        for (Integer integer : subTasksIds) {
-            subTasks.remove(integer);
-        }
-        epics.remove(id);
     }
 
     public void removeSubTaskByIdentifier(int id) {
-        int epicsId = subTasks.get(id).getEpicsId();
-        subTasks.remove(id);
-        checkEpicStatusWhenRemoveSubTaskByIdentifier();
+        if (subTasks.containsKey(id)) {
+            int epicsId = subTasks.get(id).getEpicsId();
+            subTasks.remove(id);
+            updateEpicStatus(epicsId);
+        } else {
+            System.out.println("Подзадачи с таким ID нет в программе.");
+        }
     }
 
     //                              МЕТОДЫ ДЛЯ ОБНОВЛЕНИЯ ЗАДАЧИ ПО ИДЕНТИФИКАТОРУ
 
     public void updateTask(int id, Task task) {
-        tasks.put(id, task);
+        if (tasks.containsKey(id)) {
+            tasks.put(id, task);
+        } else {
+            System.out.println("Задачи с таким ID нет в программе.");
+        }
     }
 
     public void updateSubTask(int subTaskId, SubTask subTask) {
-        int epicsId = subTasks.get(subTaskId).getEpicsId(); // сохраянем id эпика
-        int id = subTasks.get(subTaskId).getId(); // сохраняем сам id
-        subTasks.put(subTaskId, subTask);// обновляем данные сабтаска
-        subTasks.get(subTaskId).setEpicsId(epicsId);// возвращаем привязку к эпику
-        subTasks.get(subTaskId).setId(id);// возвращаем коррктный id
-        checkEpicStatusIsUpdated(subTaskId);// проверяем, как поменялся статус эпика
+        if (subTasks.containsKey(subTaskId)) {
+            int epicsId = subTasks.get(subTaskId).getEpicsId();
+            subTask.setEpicsId(epicsId);// сохраянем id эпика
+            subTask.setId(subTasks.get(subTaskId).getId()); // сохраняем сам id
+            subTasks.put(subTaskId, subTask);// обновляем данные сабтаска
+            updateEpicStatus(epicsId);// обновляем данные эпика
+        } else {
+            System.out.println("Подзадачи с таким ID нет в программе.");
+        }
     }
 
-    private void checkEpicStatusIsUpdated(int subTaskId) {
-        int epicsId = subTasks.get(subTaskId).getEpicsId(); /*создал перменную просто чтобы каждый раз не писать
-                                                                subTasks.get(subTaskId).getEpicsId()*/
-        int newCounter = 0;//в этих переменных считаем количество статусов new, done и in_progress
-        int inProgressCounter = 0;
-        int doneCounter = 0;
-        int subTasksCounter = 0;// тут считаем, сколько всего у нас сабкасков относятся к нужному эпику
+    public void updateEpic(int id, Epic epic) {
+        if (epics.containsKey(id)) {
+            epic.setStatus(epics.get(id).getStatus());
+            epic.setId(id);
+            epics.put(id, epic);
+        } else {
+            System.out.println("Эпика с таким ID нет в программе.");
+        }
+    }
 
-        for (Integer integer : subTasks.keySet()) {
-            if (subTasks.get(integer).getEpicsId() == subTasks.get(subTaskId).getEpicsId()) {
-                if (subTasks.get(integer).getStatus().equals("NEW")) {
-                    newCounter++;
-                } else if (subTasks.get(integer).getStatus().equals("IN_PROGRESS")) {
-                    inProgressCounter++;
-                } else if (subTasks.get(integer).getStatus().equals("DONE")) {
-                    doneCounter++;
-                } else {
-                    System.out.println("Неверный статус задачи.");
-                }
-                subTasksCounter++;
+    // Вспомогательные методы для обновления статуса эпика
+
+    private void updateEpicStatus(int epicId) { /*Разделил метод по обновлению статуса эпика на два, потому что один
+                                                  метод отвечает за поиск изменения в статусе, а второй за создание
+                                                  нового объекта класса с новыми данными по статусу.*/
+        String epicsName = epics.get(epicId).getName();
+        String epicsDescription = epics.get(epicId).getDescription();
+
+        epics.put(epicId, new Epic(epicsName, epicsDescription, getUpdatedEpicsStatus(epicId)));
+        epics.get(epicId).setId(epicId);
+    }
+
+    private Task.Status getUpdatedEpicsStatus(int epicId) {
+        Task.Status epicsStatus;
+        Set<Task.Status> subTasksStatuses = new HashSet<>();/*узнал, что в этой коллекции хранятся уникальные значения и
+                                                              решил использовать.*/
+
+        for (Integer subId : subTasks.keySet()) {
+            if (subTasks.get(subId).getEpicsId() == epicId) {
+                subTasksStatuses.add(subTasks.get(subId).getStatus());
             }
         }
-        updateEpicStatus(epicsId, newCounter, inProgressCounter, doneCounter, subTasksCounter);
-    }
 
-    //                      ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ДЛЯ ОБНОВЛЕНИЯ ЭПИКОВ ВСВЯЗИ В ОБНОВЛЕНИЕ ПОДЗАДАЧ
-
-    private void updateEpicStatus(int epicsId,
-                                  int newCounter,
-                                  int inProgressCounter,
-                                  int doneCounter,
-                                  int subTasksCounter) {
-        if (subTasksCounter == newCounter) {
-            epics.put(epicsId, new Epic(epics.get(epicsId).getName(),
-                    epics.get(epicsId).getDescription(), "NEW"));
-        } else if (subTasksCounter == doneCounter) {
-            epics.put(epicsId, new Epic(epics.get(epicsId).getName(),
-                    epics.get(epicsId).getDescription(), "DONE"));
-        } else if (inProgressCounter > 0) {
-            epics.put(epicsId, new Epic(epics.get(epicsId).getName(),
-                    epics.get(epicsId).getDescription(), "IN_PROGRESS"));
+        if (subTasksStatuses.isEmpty()) {
+            epicsStatus = Task.Status.NEW;
+        } else if (subTasksStatuses.contains(Task.Status.IN_PROGRESS)) {
+            epicsStatus = Task.Status.IN_PROGRESS;
+        } else if (subTasksStatuses.size() == 1) {
+            if (subTasksStatuses.contains(Task.Status.NEW)) {
+                epicsStatus = Task.Status.NEW;
+            } else {
+                epicsStatus = Task.Status.DONE;
+            }
+        } else {
+            epicsStatus = Task.Status.IN_PROGRESS;
         }
-    }
-
-    public void checkEpicStatusWhenRemoveSubTaskByIdentifier() { /*пахнет костылём, наверное, можно переделать метод
-                                                                   со 144 строки, но у меня что-то не получилось*/
-        for (Integer integer: subTasks.keySet()){
-            checkEpicStatusIsUpdated(subTasks.get(integer).getId());
-        }
+        return epicsStatus;
     }
 }
