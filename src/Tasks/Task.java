@@ -1,15 +1,22 @@
-public class Task {
+package Tasks;
+
+public class Task {/*Изменил содержание Класса. Добавил конструктор для работы с вводом пользователя для работы с
+                     классом Epic, изменил тип переменной status на enum, поместил классы с тасками в отдельный пакет*/
     private String name;
     private String description;
-    private String status;
+    private Status status;
     private int id;
 
-    public Task(String name, String description, String status) {
+    public Task(String name, String description, Status status) {
         this.name = name;
         this.description = description;
         this.status = status;
     }
 
+    public Task(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 
     public void setId(int id) {
         this.id = id;
@@ -27,7 +34,7 @@ public class Task {
         return description;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
@@ -39,19 +46,23 @@ public class Task {
         this.description = description;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
     @Override
     public String toString(){
-        return "  Название задачи: " + name +
+        return "Тип задачи - " + getTaskType() + "  Название задачи: " + name +
                 "\n  Статус задачи: " + status +
                 "\n  Описание задачи: " + description;
     }
 
     public String getTaskType(){
-        return "Задача";
+        return "задача";
+    }
+
+    public enum Status{
+        NEW, IN_PROGRESS, DONE;
     }
 
 }

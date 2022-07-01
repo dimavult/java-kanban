@@ -1,3 +1,7 @@
+import Tasks.Epic;
+import Tasks.SubTask;
+import Tasks.Task;
+
 import java.util.*;
 
 public class TaskManager {
@@ -21,7 +25,7 @@ public class TaskManager {
 
     //                                      МЕТОДЫ ПО ПОЛУЧЕНИЯ СПИСКА ЗАДАЧ ОПРЕДЕЛЕННОГО ТИПА
 
-    public void getTasksList() {
+    public HashMap getTasksList() {
         for (Integer integer : tasks.keySet()) {
             System.out.println(tasks.get(integer).getTaskType() + " ID - " + integer);
             System.out.println(tasks.get(integer).toString());
