@@ -1,19 +1,29 @@
-package Tasks;
+package task;
+
+import constants.TasksStatus;
 
 public class Task {/*Изменил содержание Класса. Добавил конструктор для работы с вводом пользователя для работы с
                      классом Epic, изменил тип переменной status на enum, поместил классы с тасками в отдельный пакет*/
-    private String name;
-    private String description;
-    private Status status;
-    private int id;
+    protected String name;
+    protected String description;
+    protected TasksStatus.Status status;
+    protected int id;
 
-    public Task(String name, String description, Status status) {
+    public Task(String name, String description, TasksStatus.Status status, int id) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.id = id;
+    }
+
+    public Task(String name, String description, TasksStatus.Status status) { /*Перегрузил конструктор для создания
+                                                                                конструктора сабтаски*/
         this.name = name;
         this.description = description;
         this.status = status;
     }
 
-    public Task(String name, String description) {
+    public Task(String name, String description) { // перегрузил конструктор для создания конструктора Эпика
         this.name = name;
         this.description = description;
     }
@@ -34,10 +44,6 @@ public class Task {/*Изменил содержание Класса. Доба�
         return description;
     }
 
-    public Status getStatus() {
-        return status;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -46,7 +52,11 @@ public class Task {/*Изменил содержание Класса. Доба�
         this.description = description;
     }
 
-    public void setStatus(Status status) {
+    public TasksStatus.Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(TasksStatus.Status status) {
         this.status = status;
     }
 
@@ -60,9 +70,4 @@ public class Task {/*Изменил содержание Класса. Доба�
     public String getTaskType(){
         return "задача";
     }
-
-    public enum Status{
-        NEW, IN_PROGRESS, DONE;
-    }
-
 }
