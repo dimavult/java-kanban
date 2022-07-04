@@ -21,14 +21,13 @@ public class Main {
 
         taskManager.updateTask(new Task("Покушать", "Доесть рис", TasksStatus.Status.DONE, 1));
         taskManager.updateTask(new Task("ПОчистить зубы", "Чистим зубы", TasksStatus.Status.IN_PROGRESS, 2));
-        taskManager.updateSubTask(new SubTask("Собрать коробки", "Положить в коробки вещи", TasksStatus.Status.IN_PROGRESS, 4, 6));
+        taskManager.updateSubTask(new SubTask("Собрать коробки", "Положить в коробки вещи", TasksStatus.Status.IN_PROGRESS, 4, 3));
         taskManager.updateSubTask(new SubTask("Упаковать кота", "Кинуть его в переноку", TasksStatus.Status.NEW, 5, 3));
         taskManager.updateSubTask(new SubTask("Задачники", "купить задачники по английскому", TasksStatus.Status.NEW, 7, 6));
         taskManager.updateSubTask(new SubTask("Сериалы", "Посмотреть сериал 'Острые козырьки' в оригинале", TasksStatus.Status.NEW, 8, 6));
         taskManager.updateSubTask(new SubTask("Книги", "Читать книги на английском", TasksStatus.Status.DONE, 9, 6));
 
-
-//        System.out.println(taskManager.getEpicByIdentifier(3).getSubtaskIds());
+        taskManager.updateEpic(new Epic("Переезд", "Переехать в Африку", 3));
 
         System.out.println(taskManager.getTasksList());
         System.out.println(taskManager.getEpicsList());

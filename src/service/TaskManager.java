@@ -51,11 +51,11 @@ public class TaskManager { /*Поместил класс в отдельный �
     public ArrayList<SubTask> getAllEpicsSubtasks(int epicId) {
         ArrayList<SubTask> subTasksWithCurrentEpicId = new ArrayList<>();
 
-        for (Integer integer : subTasks.keySet()) {
-            if (subTasks.get(integer).getEpicsId() == epicId) {
-                subTasksWithCurrentEpicId.add(subTasks.get(integer));
-            }
+        for(Integer integer: epics.get(epicId).getSubtaskIds()){
+            SubTask subTask = subTasks.get(integer);
+            subTasksWithCurrentEpicId.add(subTask);
         }
+        
         return subTasksWithCurrentEpicId;
     }
 
