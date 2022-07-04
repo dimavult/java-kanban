@@ -1,38 +1,40 @@
-import Tasks.Epic;
-import Tasks.SubTask;
-import Tasks.Task;
+import service.TaskManager;
+import task.Epic;
+import task.SubTask;
+import task.Task;
+import constants.TasksStatus;
 
 public class Main {
     public static void main(String[] args) {
         TaskManager taskManager = new TaskManager();
 
+        taskManager.addNewTask(new Task("Покушать", "Доесть рис", TasksStatus.Status.NEW));
+        taskManager.addNewTask(new Task("ПОчистить зубы", "Чистим зубы", TasksStatus.Status.NEW));
+        taskManager.addNewEpic(new Epic("Переезд", "Переехать в деревню"));
+        taskManager.addNewSubTask(new SubTask("Собрать коробки", "Положить в коробки вещи", TasksStatus.Status.NEW, 3));//Добавляем сабтаски по epicID
+        taskManager.addNewSubTask(new SubTask("Упаковать кота", "Кинуть его в переноку", TasksStatus.Status.DONE, 3));
+        taskManager.addNewEpic(new Epic("Английский", "Выучить английский за 2 года"));
+        taskManager.addNewSubTask(new SubTask("Задачники", "купить задачники по английскому", TasksStatus.Status.DONE, 6));
+        taskManager.addNewSubTask(new SubTask("Сериалы", "Посмотреть сериал 'Острые козырьки' в оригинале", TasksStatus.Status.DONE, 6));
+        taskManager.addNewSubTask(new SubTask("Книги", "Читать книги на английском", TasksStatus.Status.NEW, 6));
 
 
-        taskManager.addNewTask(new Task("Помыть полы", "Взять тряпку, ведро, мыть полы", "NEW"));
-        taskManager.addNewTask(new Task("Почистить картошку", "Для пюре", "NEW"));
-        taskManager.addNewEpic(new Epic("Переезд", "Переехать в другую страну", "NEW" ));
-        taskManager.addNewSubTask(new SubTask("Собрать коробки", "Положить в коробки вещи", "NEW"),
-                                              3);
-        taskManager.addNewSubTask(new SubTask("Упаковать кота", "Кинуть его в переноску", "NEW"),
-                                              3);
-        taskManager.addNewEpic(new Epic("Гнаться за преступником", "Он убил члоевка, нужно догнать",
-                "NEW"));
-        taskManager.addNewSubTask(new SubTask("Стрелять", "Нужно его подстрелить", "NEW"), 6);
-        taskManager.updateTask(1, new Task("Помыть полы", "Взять тряпку, ведро, мыть полы", "DONE"));
-        taskManager.updateTask(2, new Task("Почистить картошку", "Для пюре", "IN_PROGRESS"));
-        taskManager.updateSubTask(7, new SubTask("Стрелять", "Нужно его подстрелить", "DONE"));
-        taskManager.updateSubTask(4, new SubTask("Собрать коробки", "Положить в коробки вещи", "IN_PROGRESS"));
-        taskManager.getTasksList();
-        taskManager.getEpicsList();
-        taskManager.getSubTasksList();
+        taskManager.updateTask(new Task("Покушать", "Доесть рис", TasksStatus.Status.DONE, 1));
+        taskManager.updateTask(new Task("ПОчистить зубы", "Чистим зубы", TasksStatus.Status.IN_PROGRESS, 2));
+        taskManager.updateSubTask(new SubTask("Собрать коробки", "Положить в коробки вещи", TasksStatus.Status.IN_PROGRESS, 4, 6));
+        taskManager.updateSubTask(new SubTask("Упаковать кота", "Кинуть его в переноку", TasksStatus.Status.NEW, 5, 3));
+        taskManager.updateSubTask(new SubTask("Задачники", "купить задачники по английскому", TasksStatus.Status.NEW, 7, 6));
+        taskManager.updateSubTask(new SubTask("Сериалы", "Посмотреть сериал 'Острые козырьки' в оригинале", TasksStatus.Status.NEW, 8, 6));
+        taskManager.updateSubTask(new SubTask("Книги", "Читать книги на английском", TasksStatus.Status.DONE, 9, 6));
 
-        taskManager.removeTaskByIdentifier(1);
-        taskManager.removeSubTaskByIdentifier(4);
-        System.out.println("---------------------------");
-        taskManager.getTasksList();
-        taskManager.getEpicsList();
-        taskManager.getSubTasksList();
-        System.out.println("---------------------------");
-        taskManager.getEpicByIdentifier(6);
+
+//        System.out.println(taskManager.getEpicByIdentifier(3).getSubtaskIds());
+
+        System.out.println(taskManager.getTasksList());
+        System.out.println(taskManager.getEpicsList());
+        System.out.println(taskManager.getSubTasksList());
+
+
+
     }
 }
