@@ -24,8 +24,16 @@ public class Epic extends Task{ /*Изменил содержание Класс
         subtaskIds = new ArrayList<>();
     }
 
+    public Epic(String name, String description, int id) {
+        super(name, description, id);
+    }
+
     @Override
     public String getTaskType() {
         return "эпик";
+    }
+
+    public void removeSubTaskId(int id){
+        subtaskIds.remove((Integer) id);
     }
 }
