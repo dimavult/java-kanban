@@ -23,6 +23,12 @@ public class Task {/*Изменил содержание Класса. Доба�
         this.status = status;
     }
 
+    public Task(String name, String description, int id) { // перегрузил конструктор для создания конструктора Эпика
+        this.name = name;
+        this.description = description;
+        this.id = id;
+    }
+
     public Task(String name, String description) { // перегрузил конструктор для создания конструктора Эпика
         this.name = name;
         this.description = description;
