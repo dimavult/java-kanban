@@ -108,8 +108,10 @@ public class TaskManager { /*Поместил класс в отдельный �
         subTasks.clear();
 
         for (Integer integer : epicsIds) {
+            epics.get(integer).getSubtaskIds().clear();// почистил список сабтасок
             updateEpicStatus(integer);// потому просто обновлю его статус на NEW
         }
+
     }
 
     //                            МЕТОДЫ ДЛЯ ПОЛУЧЕНИЯ ИНФОРМАЦИИ О ЗАДАЧЕ ПО ИДЕНТИФИКАТОРУ
@@ -151,6 +153,7 @@ public class TaskManager { /*Поместил класс в отдельный �
         if (subTasks.containsKey(id)) {
             int epicsId = subTasks.get(id).getEpicsId();
             subTasks.remove(id);
+            epics.get(epicsId).removeSubTaskId(id);
             updateEpicStatus(epicsId);
         } else {
             System.out.println("Подзадачи с таким ID нет в программе.");
@@ -185,9 +188,13 @@ public class TaskManager { /*Поместил класс в отдельный �
         int id = epic.getId();
 
         if (epics.containsKey(id)) {
-            epic.setStatus(epics.get(id).getStatus());
-            epic.setId(id);
+            for (Integer integer: epics.get(id).getSubtaskIds()){/*Насколько я понимаю, пользователь не может передать
+                                                                   передать список сабтасок метода, потому их надо
+                                                                   сохранить отдельно*/
+                epic.addSubtaskId(integer);
+            }
             epics.put(id, epic);
+            updateEpicStatus(id);
         } else {
             System.out.println("Эпика с таким ID нет в программе.");
         }
