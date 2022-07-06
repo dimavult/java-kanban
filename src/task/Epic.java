@@ -1,8 +1,7 @@
 package task;
 
-import constants.TasksStatus;
-
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Epic extends Task{ /*Изменил содержание Класса. Добавил конструктор для работы с вводом пользователя,
                                   оставив второй конструктор для внутренней работы приложения.*/
@@ -20,7 +19,7 @@ public class Epic extends Task{ /*Изменил содержание Класс
 
     public Epic(String name, String description) {
         super(name, description);
-        this.status = TasksStatus.Status.NEW;
+        this.status = Status.NEW;
         subtaskIds = new ArrayList<>();
     }
 
@@ -35,5 +34,24 @@ public class Epic extends Task{ /*Изменил содержание Класс
 
     public void removeSubTaskId(int id){
         subtaskIds.remove((Integer) id);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Epic epic = (Epic) o;
+        return Objects.equals(subtaskIds, epic.subtaskIds);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), subtaskIds);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + "\n  ID подзадач эпика " + getSubtaskIds();
     }
 }

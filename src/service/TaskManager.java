@@ -1,8 +1,7 @@
 package service;
 
-import jdk.jshell.Snippet;
 import task.Epic;
-import constants.TasksStatus;
+import task.Status;
 import task.SubTask;
 import task.Task;
 
@@ -22,27 +21,39 @@ public class TaskManager { /*Поместил класс в отдельный �
 
     //                                      МЕТОДЫ ПО ПОЛУЧЕНИЯ СПИСКА ЗАДАЧ ОПРЕДЕЛЕННОГО ТИПА
 
-    public HashMap<Integer, Task> getTasksList() {
+    public ArrayList<Task> getTasksList() {
         if (tasks.isEmpty()) {
             return null;
         } else {
-            return tasks;
+            ArrayList<Task> tasksClone = new ArrayList<>();
+            for(Integer integer: tasks.keySet()){
+                tasksClone.add(tasks.get(integer));
+            }
+            return tasksClone;
         }
     }
 
-    public HashMap<Integer, Epic> getEpicsList() {
+    public ArrayList<Epic> getEpicsList() {
         if (epics.isEmpty()) {
             return null;
         } else {
-            return epics;
+            ArrayList<Epic> epicsClone = new ArrayList<>();
+            for(Integer integer: epics.keySet()){
+                epicsClone.add(epics.get(integer));
+            }
+            return epicsClone;
         }
     }
 
-    public HashMap<Integer, SubTask> getSubTasksList() {
+    public ArrayList<SubTask> getSubTasksList() {
         if (subTasks.isEmpty()) {
             return null;
         } else {
-            return subTasks;
+            ArrayList<SubTask> subTasksClone = new ArrayList<>();
+            for(Integer integer: subTasks.keySet()){
+                subTasksClone.add(subTasks.get(integer));
+            }
+            return subTasksClone;
         }
     }
 
@@ -51,11 +62,11 @@ public class TaskManager { /*Поместил класс в отдельный �
     public ArrayList<SubTask> getAllEpicsSubtasks(int epicId) {
         ArrayList<SubTask> subTasksWithCurrentEpicId = new ArrayList<>();
 
-        for(Integer integer: epics.get(epicId).getSubtaskIds()){
+        for (Integer integer : epics.get(epicId).getSubtaskIds()) {
             SubTask subTask = subTasks.get(integer);
             subTasksWithCurrentEpicId.add(subTask);
         }
-        
+
         return subTasksWithCurrentEpicId;
     }
 
@@ -68,7 +79,6 @@ public class TaskManager { /*Поместил класс в отдельный �
 
     public void addNewEpic(Epic epic) {
         epic.setId(getIdAndIncrement());
-        epic.setStatus(TasksStatus.Status.NEW);
         epics.put(epic.getId(), epic);
     }
 
@@ -98,7 +108,7 @@ public class TaskManager { /*Поместил класс в отдельный �
         subTasks.clear();
     }
 
-    public void removeAllSubTasks() { // не знаю, что должно происходить с эпиком при удалении всех подзадач
+    public void removeAllSubTasks() { // При удалении всех сабтасок, статусы всех эпиков сетятся на NEW
         Set<Integer> epicsIds = new HashSet<>();
 
         for (Integer integer : subTasks.keySet()) {
@@ -109,7 +119,7 @@ public class TaskManager { /*Поместил класс в отдельный �
 
         for (Integer integer : epicsIds) {
             epics.get(integer).getSubtaskIds().clear();// почистил список сабтасок
-            updateEpicStatus(integer);// потому просто обновлю его статус на NEW
+            updateEpicStatus(integer);// обнвил его статус на NEW
         }
 
     }
@@ -141,19 +151,22 @@ public class TaskManager { /*Поместил класс в отдельный �
     public void removeEpicByIdentifier(int id) {  /*Метод вместе с эпиком удаляет сабтаски, у которых Id эпика - это id
                                                     удаляемого эпика. Посчитал нужным сделать так, потому что как мне
                                                     кажется, не может быть сабтасков без эпика.*/
-        for (Integer integer : epics.get(id).getSubtaskIds()) {
-            subTasks.remove(integer);
-        }
+        if (epics.containsKey(id)) {
+            for (Integer integer : epics.get(id).getSubtaskIds()) {
+                subTasks.remove(integer);
+            }
 
-        epics.remove(id);
+            epics.remove(id);
+        }
     }
 
     public void removeSubTaskByIdentifier(int id) {
 
         if (subTasks.containsKey(id)) {
             int epicsId = subTasks.get(id).getEpicsId();
+
+            epics.get(epicsId).removeSubTaskId(id);//
             subTasks.remove(id);
-            epics.get(epicsId).removeSubTaskId(id);
             updateEpicStatus(epicsId);
         } else {
             System.out.println("Подзадачи с таким ID нет в программе.");
@@ -188,13 +201,8 @@ public class TaskManager { /*Поместил класс в отдельный �
         int id = epic.getId();
 
         if (epics.containsKey(id)) {
-            for (Integer integer: epics.get(id).getSubtaskIds()){/*Насколько я понимаю, пользователь не может передать
-                                                                   передать список сабтасок метода, потому их надо
-                                                                   сохранить отдельно*/
-                epic.addSubtaskId(integer);
-            }
-            epics.put(id, epic);
-            updateEpicStatus(id);
+            epics.get(id).setName(epic.getName());
+            epics.get(id).setDescription(epic.getDescription());
         } else {
             System.out.println("Эпика с таким ID нет в программе.");
         }
@@ -209,22 +217,22 @@ public class TaskManager { /*Поместил класс в отдельный �
 
         if (subTasksList.size() != 0) {
             for (SubTask subTask : subTasksList) {
-                if (subTask.getStatus().equals(TasksStatus.Status.IN_PROGRESS)) {
-                    epic.setStatus(TasksStatus.Status.IN_PROGRESS);
+                if (subTask.getStatus().equals(Status.IN_PROGRESS)) {
+                    epic.setStatus(Status.IN_PROGRESS);
                     return;
-                } else if (subTask.getStatus().equals(TasksStatus.Status.DONE)) {
+                } else if (subTask.getStatus().equals(Status.DONE)) {
                     doneCounter++;
                     if (doneCounter == subTasksList.size()) {
-                        epic.setStatus(TasksStatus.Status.DONE);
+                        epic.setStatus(Status.DONE);
                     } else if (doneCounter > 0 && doneCounter < subTasksList.size()) {
-                        epic.setStatus(TasksStatus.Status.IN_PROGRESS);
+                        epic.setStatus(Status.IN_PROGRESS);
                     } else {
-                        epic.setStatus(TasksStatus.Status.NEW);
+                        epic.setStatus(Status.NEW);
                     }
                 }
             }
         } else {
-            epic.setStatus(TasksStatus.Status.NEW);
+            epic.setStatus(Status.NEW);
         }
     }
 }

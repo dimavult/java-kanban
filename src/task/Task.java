@@ -1,22 +1,22 @@
 package task;
 
-import constants.TasksStatus;
+import java.util.Objects;
 
 public class Task {/*Изменил содержание Класса. Добавил конструктор для работы с вводом пользователя для работы с
                      классом Epic, изменил тип переменной status на enum, поместил классы с тасками в отдельный пакет*/
     protected String name;
     protected String description;
-    protected TasksStatus.Status status;
+    protected Status status;
     protected int id;
 
-    public Task(String name, String description, TasksStatus.Status status, int id) {
+    public Task(String name, String description, Status status, int id) {
         this.name = name;
         this.description = description;
         this.status = status;
         this.id = id;
     }
 
-    public Task(String name, String description, TasksStatus.Status status) { /*Перегрузил конструктор для создания
+    public Task(String name, String description, Status status) { /*Перегрузил конструктор для создания
                                                                                 конструктора сабтаски*/
         this.name = name;
         this.description = description;
@@ -58,22 +58,35 @@ public class Task {/*Изменил содержание Класса. Доба�
         this.description = description;
     }
 
-    public TasksStatus.Status getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(TasksStatus.Status status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
     @Override
     public String toString(){
-        return "Тип задачи - " + getTaskType() + "  Название задачи: " + name +
+        return "ID задачи - " + id + "\n  Тип задачи - " + getTaskType() + "\n  Название задачи: " + name +
                 "\n  Статус задачи: " + status +
                 "\n  Описание задачи: " + description;
     }
 
     public String getTaskType(){
         return "задача";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description) && status == task.status;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description, status, id);
     }
 }
