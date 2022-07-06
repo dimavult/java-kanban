@@ -5,9 +5,11 @@ import task.Status;
 import task.SubTask;
 import task.Task;
 
+import java.io.Serializable;
+import java.io.SerializablePermission;
 import java.util.*;
 
-public class TaskManager { /*Поместил класс в отдельный пакет, изменил метод по сохранению Эпиков, изменил логику
+public class TaskManager implements Serializable{ /*Поместил класс в отдельный пакет, изменил метод по сохранению Эпиков, изменил логику
                              обновления статуса эпика*/
     private HashMap<Integer, Task> tasks = new HashMap<>();
     private HashMap<Integer, Epic> epics = new HashMap<>();
@@ -21,39 +23,27 @@ public class TaskManager { /*Поместил класс в отдельный �
 
     //                                      МЕТОДЫ ПО ПОЛУЧЕНИЯ СПИСКА ЗАДАЧ ОПРЕДЕЛЕННОГО ТИПА
 
-    public ArrayList<Task> getTasksList() {
+    public HashMap<Integer, Task> getTasksList() {
         if (tasks.isEmpty()) {
             return null;
         } else {
-            ArrayList<Task> tasksClone = new ArrayList<>();
-            for(Integer integer: tasks.keySet()){
-                tasksClone.add(tasks.get(integer));
-            }
-            return tasksClone;
+            return new HashMap<>(tasks);
         }
     }
 
-    public ArrayList<Epic> getEpicsList() {
+    public HashMap<Integer, Epic> getEpicsList() {
         if (epics.isEmpty()) {
             return null;
         } else {
-            ArrayList<Epic> epicsClone = new ArrayList<>();
-            for(Integer integer: epics.keySet()){
-                epicsClone.add(epics.get(integer));
-            }
-            return epicsClone;
+            return new HashMap<>(epics);
         }
     }
 
-    public ArrayList<SubTask> getSubTasksList() {
+    public HashMap<Integer, SubTask> getSubTasksList() {
         if (subTasks.isEmpty()) {
             return null;
         } else {
-            ArrayList<SubTask> subTasksClone = new ArrayList<>();
-            for(Integer integer: subTasks.keySet()){
-                subTasksClone.add(subTasks.get(integer));
-            }
-            return subTasksClone;
+            return new HashMap<>(subTasks);
         }
     }
 
