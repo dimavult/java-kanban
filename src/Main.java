@@ -43,60 +43,63 @@ public class Main {
         System.out.println(taskManager.getTasksList().hashCode());
         System.out.println(taskManager.getTasksList());
 
-        // КОНТРАКТ EQUALS
-        System.out.println("-----------------------Рефлексивность");
-        //  1) Рефлексивность
-        System.out.println(taskManager.getEpicByIdentifier(3).equals(taskManager.getEpicByIdentifier(3)));
-        System.out.println("-----------------------Симметричность");
-
-        // 2) Симметричность
-        Epic epic = taskManager.getEpicByIdentifier(3);
-
-        System.out.println(taskManager.getEpicByIdentifier(3).equals(epic));
-        System.out.println(epic.equals(taskManager.getEpicByIdentifier(3)));
-        System.out.println("-----------------------Транзитивность");
-
-        // 3) Транзитивность
-
-        Epic epic1 = taskManager.getEpicByIdentifier(3);
-
-        System.out.println(taskManager.getEpicByIdentifier(3).equals(epic));
-        System.out.println(epic.equals(epic1));
-        System.out.println(taskManager.getEpicByIdentifier(3).equals(epic1));
-        System.out.println("-----------------------Согласованность");
-
-
-        // 4) Согласованность
-
-        System.out.println(taskManager.getEpicByIdentifier(3).equals(epic));
-        System.out.println(taskManager.getEpicByIdentifier(3).equals(epic));
-        System.out.println("-----------------------Проверка на null");
-
-        // 5) Проверка на null
-
-        System.out.println(taskManager.getEpicByIdentifier(3).equals(null));
-        System.out.println(epic.equals(null));
+        taskManager.getTasksList().get(1).setName("блаблабла");
         System.out.println("-----------------------");
-
-        // Контракты hashCode
-
-        // 1) Там нет названий, но это про то, что при вызове хэшкода несколько раз, значение не поменяется
-
-        System.out.println(taskManager.getTaskById(1).hashCode());
-        System.out.println(taskManager.getTaskById(1).hashCode());
-        System.out.println("-----------------------");
-
-        // 2) вызов метода hashCode над двумя объектами должен всегда возвращать одно и то же число,
-        // если эти объекты равны по equals
-
-        System.out.println(taskManager.getEpicByIdentifier(3).hashCode());
-        System.out.println(epic.hashCode());
-        System.out.println("-----------------------");
-
-        // 3) вызов метода hashCode над двумя неравными между собой объектами должен возвращать разные хэш-значения.
-
-        System.out.println(taskManager.getTaskById(1).equals(taskManager.getEpicByIdentifier(3)));
-        System.out.println(taskManager.getTaskById(1).hashCode());
-        System.out.println(taskManager.getEpicByIdentifier(3).hashCode());
+        System.out.println(taskManager.getTasksList());
+//        // КОНТРАКТ EQUALS
+//        System.out.println("-----------------------Рефлексивность");
+//        //  1) Рефлексивность
+//        System.out.println(taskManager.getEpicByIdentifier(3).equals(taskManager.getEpicByIdentifier(3)));
+//        System.out.println("-----------------------Симметричность");
+//
+//        // 2) Симметричность
+//        Epic epic = taskManager.getEpicByIdentifier(3);
+//
+//        System.out.println(taskManager.getEpicByIdentifier(3).equals(epic));
+//        System.out.println(epic.equals(taskManager.getEpicByIdentifier(3)));
+//        System.out.println("-----------------------Транзитивность");
+//
+//        // 3) Транзитивность
+//
+//        Epic epic1 = taskManager.getEpicByIdentifier(3);
+//
+//        System.out.println(taskManager.getEpicByIdentifier(3).equals(epic));
+//        System.out.println(epic.equals(epic1));
+//        System.out.println(taskManager.getEpicByIdentifier(3).equals(epic1));
+//        System.out.println("-----------------------Согласованность");
+//
+//
+//        // 4) Согласованность
+//
+//        System.out.println(taskManager.getEpicByIdentifier(3).equals(epic));
+//        System.out.println(taskManager.getEpicByIdentifier(3).equals(epic));
+//        System.out.println("-----------------------Проверка на null");
+//
+//        // 5) Проверка на null
+//
+//        System.out.println(taskManager.getEpicByIdentifier(3).equals(null));
+//        System.out.println(epic.equals(null));
+//        System.out.println("-----------------------");
+//
+//        // Контракты hashCode
+//
+//        // 1) Там нет названий, но это про то, что при вызове хэшкода несколько раз, значение не поменяется
+//
+//        System.out.println(taskManager.getTaskById(1).hashCode());
+//        System.out.println(taskManager.getTaskById(1).hashCode());
+//        System.out.println("-----------------------");
+//
+//        // 2) вызов метода hashCode над двумя объектами должен всегда возвращать одно и то же число,
+//        // если эти объекты равны по equals
+//
+//        System.out.println(taskManager.getEpicByIdentifier(3).hashCode());
+//        System.out.println(epic.hashCode());
+//        System.out.println("-----------------------");
+//
+//        // 3) вызов метода hashCode над двумя неравными между собой объектами должен возвращать разные хэш-значения.
+//
+//        System.out.println(taskManager.getTaskById(1).equals(taskManager.getEpicByIdentifier(3)));
+//        System.out.println(taskManager.getTaskById(1).hashCode());
+//        System.out.println(taskManager.getEpicByIdentifier(3).hashCode());
     }
 }
