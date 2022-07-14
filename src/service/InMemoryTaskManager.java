@@ -3,7 +3,10 @@ package service;
 import interfaces.TaskManager;
 import task.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.HashSet;
 
 public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
@@ -13,44 +16,62 @@ public class InMemoryTaskManager implements TaskManager {
 
     private int identifier = 1;
 
-    public int getIdAndIncrement() {
+    private int getIdAndIncrement() {
         return identifier++;
+    }
+
+    @Override
+    public List<Task> getHistory() {
+        return Managers.getDefaultHistory().getHistory();
     }
 
     //                                      МЕТОДЫ ПО ПОЛУЧЕНИЯ СПИСКА ЗАДАЧ ОПРЕДЕЛЕННОГО ТИПА
 
     @Override
-    public HashMap<Integer, Task> getTasksList() {
+    public List<Task> getTasksList() {
+        List<Task> taskList = new ArrayList<>();
         if (tasks.isEmpty()) {
             return null;
         } else {
-            return new HashMap<>(tasks);
+            for (Integer id: tasks.keySet()){
+                taskList.add(tasks.get(id));
+            }
+            return taskList;
         }
     }
 
     @Override
-    public HashMap<Integer, Epic> getEpicsList() {
+    public List<Epic> getEpicsList() {
+        List<Epic> epicList = new ArrayList<>();
         if (epics.isEmpty()) {
             return null;
         } else {
-            return new HashMap<>(epics);
+            for (Integer id: epics.keySet()){
+                epicList.add(epics.get(id));
+            }
+            return epicList;
         }
     }
 
     @Override
-    public HashMap<Integer, SubTask> getSubTasksList() {
+    public List<SubTask> getSubTasksList() {
+        List<SubTask> subTaskList = new ArrayList<>();
         if (subTasks.isEmpty()) {
             return null;
         } else {
-            return new HashMap<>(subTasks);
+            for (Integer id: subTasks.keySet()){
+                subTaskList.add(subTasks.get(id));
+            }
+            return subTaskList;
         }
     }
+
 
     //                                  ПОЛУЧЕНИЕ ВСЕХ САБТАСКОВ НУЖНОГО ЭПИКА
 
     @Override
-    public ArrayList<SubTask> getAllEpicsSubtasks(int epicId) {
-        ArrayList<SubTask> subTasksWithCurrentEpicId = new ArrayList<>();
+    public List<SubTask> getAllEpicsSubtasks(int epicId) {
+        List<SubTask> subTasksWithCurrentEpicId = new ArrayList<>();
 
         for (Integer integer : epics.get(epicId).getSubtaskIds()) {
             SubTask subTask = subTasks.get(integer);
@@ -63,31 +84,35 @@ public class InMemoryTaskManager implements TaskManager {
     //                                   МЕТОДЫ ПО ДОБАВЛЕНИЮ ЗАДАЧ
 
     @Override
-    public void addNewTask(Task task) {
+    public int addNewTask(Task task) {
         task.setId(getIdAndIncrement());
         tasks.put(task.getId(), task);
+        return identifier - 1; // вернул ID добавленной задачи
     }
 
     @Override
-    public void addNewEpic(Epic epic) {
+    public int addNewEpic(Epic epic) {
         epic.setId(getIdAndIncrement());
         epics.put(epic.getId(), epic);
+        return identifier - 1; // вернул ID добавленной задачи
     }
 
     @Override
-    public void addNewSubTask(SubTask subTask) {
+    public int addNewSubTask(SubTask subTask) {
         int epicsId = subTask.getEpicsId();
 
         if (epics.get(epicsId) == null) {
             System.out.println("Эпика с указанным ID не существует.");
-            return;
+            return 0;
+        } else {
+
+            subTask.setId(identifier);
+            epics.get(epicsId).addSubtaskId(identifier);
+            subTasks.put(getIdAndIncrement(), subTask);
+
+            updateEpicStatus(epicsId);
+            return identifier - 1; // вернул ID добавленной задачи
         }
-
-        subTask.setId(identifier);
-        epics.get(epicsId).addSubtaskId(identifier);
-        subTasks.put(getIdAndIncrement(), subTask);
-
-        updateEpicStatus(epicsId);
     }
 
     //                                      МЕТОДЫ ПО УДАЛЕНИЮ ВСЕХ ЗАДАЧ
@@ -105,7 +130,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeAllSubTasks() { // При удалении всех сабтасок, статусы всех эпиков сетятся на NEW
-        Set<Integer> epicsIds = new HashSet<>();
+        HashSet<Integer> epicsIds = new HashSet<>();
 
         for (Integer integer : subTasks.keySet()) {
             epicsIds.add(subTasks.get(integer).getEpicsId());
@@ -129,7 +154,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Epic getEpicByIdentifier(int id) {
+    public Epic getEpicById(int id) {
         inMemoryHistoryManager.addTask(epics.get(id));
         return epics.getOrDefault(id, null);
     }
@@ -220,7 +245,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     public void updateEpicStatus(int id) {
         Epic epic = epics.get(id);
-        ArrayList<SubTask> subTasksList = getAllEpicsSubtasks(id);
+        List<SubTask> subTasksList = getAllEpicsSubtasks(id);
         int doneCounter = 0;
 
         if (subTasksList.size() != 0) {

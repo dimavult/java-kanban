@@ -62,7 +62,8 @@ public class Main {
         Managers.getDefault().getTaskById(1);
         Managers.getDefault().getTaskById(2);
         System.out.println(Managers.getDefaultHistory().getHistory());
-
+        System.out.println("-----------------------");
+        System.out.println(Managers.getDefault().getHistory());
 
 //        // КОНТРАКТ EQUALS
 //        System.out.println("-----------------------Рефлексивность");

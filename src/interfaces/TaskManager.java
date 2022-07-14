@@ -2,42 +2,44 @@ package interfaces;
 
 import task.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public interface TaskManager {
+public interface TaskManager{
 
-    //                                      Счетчик ID задачи
+    List<Task> getHistory();
 
-    int getIdAndIncrement();
+    // МЕТОДЫ ПО ПОЛУЧЕНИЯ СПИСКА ЗАДАЧ ОПРЕДЕЛЕННОГО ТИПА
 
-    //                                      МЕТОДЫ ПО ПОЛУЧЕНИЯ СПИСКА ЗАДАЧ ОПРЕДЕЛЕННОГО ТИПА
+    List<Task> getTasksList();
 
+    List<Epic> getEpicsList();
 
-    HashMap<Integer, Task> getTasksList();
+    List<SubTask> getSubTasksList();
 
+//    HashMap<Integer, Task> getTasksList();
+//
+//    HashMap<Integer, Epic> getEpicsList();
+//
+//    HashMap<Integer, SubTask> getSubTasksList();
 
-    HashMap<Integer, Epic> getEpicsList();
-
-
-    HashMap<Integer, SubTask> getSubTasksList();
-
-    //                                  ПОЛУЧЕНИЕ ВСЕХ САБТАСКОВ НУЖНОГО ЭПИКА
-
-
-    ArrayList<SubTask> getAllEpicsSubtasks(int epicId);
-
-    //                                   МЕТОДЫ ПО ДОБАВЛЕНИЮ ЗАДАЧ
+    // ПОЛУЧЕНИЕ ВСЕХ САБТАСКОВ НУЖНОГО ЭПИКА
 
 
-    void addNewTask(Task task);
+    List<SubTask> getAllEpicsSubtasks(int epicId);
+
+    // МЕТОДЫ ПО ДОБАВЛЕНИЮ ЗАДАЧ
 
 
-    void addNewEpic(Epic epic);
+    int addNewTask(Task task);
 
 
-    void addNewSubTask(SubTask subTask);
+    int addNewEpic(Epic epic);
 
-    //                                      МЕТОДЫ ПО УДАЛЕНИЮ ВСЕХ ЗАДАЧ
+
+    int addNewSubTask(SubTask subTask);
+
+    // МЕТОДЫ ПО УДАЛЕНИЮ ВСЕХ ЗАДАЧ
 
 
     void removeAllTasks();
@@ -48,17 +50,17 @@ public interface TaskManager {
 
     void removeAllSubTasks();
 
-    //                            МЕТОДЫ ДЛЯ ПОЛУЧЕНИЯ ИНФОРМАЦИИ О ЗАДАЧЕ ПО ИДЕНТИФИКАТОРУ
+    // МЕТОДЫ ДЛЯ ПОЛУЧЕНИЯ ИНФОРМАЦИИ О ЗАДАЧЕ ПО ИДЕНТИФИКАТОРУ
 
 
     Task getTaskById(int id);
 
-    Epic getEpicByIdentifier(int id);
+    Epic getEpicById(int id);
 
 
     SubTask getSubTaskById(int id);
 
-    //                            МЕТОДЫ ДЛЯ УДАЛЕНИЯ ЗАДАЧ ПО ИДЕНТИФИКАТОРУ
+    // МЕТОДЫ ДЛЯ УДАЛЕНИЯ ЗАДАЧ ПО ИДЕНТИФИКАТОРУ
 
 
     void removeTaskByIdentifier(int id);
@@ -69,7 +71,7 @@ public interface TaskManager {
 
     void removeSubTaskByIdentifier(int id);
 
-    //                              МЕТОДЫ ДЛЯ ОБНОВЛЕНИЯ ЗАДАЧИ ПО ИДЕНТИФИКАТОРУ
+    // МЕТОДЫ ДЛЯ ОБНОВЛЕНИЯ ЗАДАЧИ ПО ИДЕНТИФИКАТОРУ
 
 
     void updateTask(Task task);

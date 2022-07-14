@@ -5,8 +5,8 @@ import interfaces.TaskManager;
 
 public class Managers {
 
-    private static InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
-    private static InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
+    private static TaskManager inMemoryTaskManager = new InMemoryTaskManager();
+    private static HistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
 
     public static TaskManager getDefault(){
         return inMemoryTaskManager;
