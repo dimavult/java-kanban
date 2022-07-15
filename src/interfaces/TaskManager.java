@@ -16,12 +16,6 @@ public interface TaskManager{
 
     List<SubTask> getSubTasksList();
 
-//    HashMap<Integer, Task> getTasksList();
-//
-//    HashMap<Integer, Epic> getEpicsList();
-//
-//    HashMap<Integer, SubTask> getSubTasksList();
-
     // ПОЛУЧЕНИЕ ВСЕХ САБТАСКОВ НУЖНОГО ЭПИКА
 
 
@@ -80,9 +74,5 @@ public interface TaskManager{
 
 
     void updateEpic(Epic epic);
-
-    // Вспомогательные методы для обновления статуса эпика
-
-    void updateEpicStatus(int id);
 
 }

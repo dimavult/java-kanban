@@ -177,9 +177,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void removeEpicByIdentifier(int id) {  /*Метод вместе с эпиком удаляет сабтаски, у которых Id эпика - это id
-                                                    удаляемого эпика. Посчитал нужным сделать так, потому что как мне
-                                                    кажется, не может быть сабтасков без эпика.*/
+    public void removeEpicByIdentifier(int id) {
         if (epics.containsKey(id)) {
             for (Integer integer : epics.get(id).getSubtaskIds()) {
                 subTasks.remove(integer);
@@ -243,7 +241,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     // Вспомогательные методы для обновления статуса эпика
 
-    public void updateEpicStatus(int id) {
+    private void updateEpicStatus(int id) {
         Epic epic = epics.get(id);
         List<SubTask> subTasksList = getAllEpicsSubtasks(id);
         int doneCounter = 0;
