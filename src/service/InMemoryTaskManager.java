@@ -3,16 +3,12 @@ package service;
 import interfaces.TaskManager;
 import task.*;
 
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashSet;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final HashMap<Integer, Epic> epics = new HashMap<>();
     private final HashMap<Integer, SubTask> subTasks = new HashMap<>();
-    private InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
 
     private int identifier = 1;
 
@@ -149,19 +145,19 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(int id) {
-        inMemoryHistoryManager.addTask(tasks.get(id));
+        Managers.getDefaultHistory().addTask(tasks.get(id));
         return tasks.getOrDefault(id, null);
     }
 
     @Override
     public Epic getEpicById(int id) {
-        inMemoryHistoryManager.addTask(epics.get(id));
+        Managers.getDefaultHistory().addTask(epics.get(id));
         return epics.getOrDefault(id, null);
     }
 
     @Override
     public SubTask getSubTaskById(int id) {
-        inMemoryHistoryManager.addTask(subTasks.get(id));
+        Managers.getDefaultHistory().addTask(subTasks.get(id));
         return subTasks.getOrDefault(id, null);
     }
 
@@ -170,6 +166,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeTaskByIdentifier(int id) {
         if (tasks.containsKey(id)) {
+            Managers.getDefaultHistory().removeTask(id);
             tasks.remove(id);
         } else {
             System.out.println("Задачи с таким ID нет в программе.");
@@ -180,9 +177,10 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeEpicByIdentifier(int id) {
         if (epics.containsKey(id)) {
             for (Integer integer : epics.get(id).getSubtaskIds()) {
+                Managers.getDefaultHistory().removeTask(integer);
                 subTasks.remove(integer);
             }
-
+            Managers.getDefaultHistory().removeTask(id);
             epics.remove(id);
         }
     }
@@ -193,8 +191,10 @@ public class InMemoryTaskManager implements TaskManager {
         if (subTasks.containsKey(id)) {
             int epicsId = subTasks.get(id).getEpicsId();
 
-            epics.get(epicsId).removeSubTaskId(id);//
+            epics.get(epicsId).removeSubTaskId(id);
+            Managers.getDefaultHistory().removeTask(id);
             subTasks.remove(id);
+
             updateEpicStatus(epicsId);
         } else {
             System.out.println("Подзадачи с таким ID нет в программе.");
