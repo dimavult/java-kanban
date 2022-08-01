@@ -3,29 +3,81 @@ package service;
 import interfaces.HistoryManager;
 import task.Task;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
+    private final HashMap<Integer, Node<Task>> browsingHistory = new HashMap<>();
+    private Node<Task> first;
+    private Node<Task> last;
 
-    private static final int BROWSING_HISTORY_MAX_SIZE = 10;
+    private void linkLast(Task task) { // != не скопировал из класса LinkedList
+        final Node<Task> l = last;
+        final Node<Task> newNode = new Node<>(l, task, null);
+        last = newNode;
+        if (l == null)
+            first = newNode;
+        else
+            l.next = newNode;
+    }
 
-    private static List<Task> browsingHistory = new LinkedList<>();
+    private ArrayList<Task> getTasks() {
+        ArrayList<Task> tasks = new ArrayList<>();
+        Node<Task> node = first;
+        while (node != null){
+            tasks.add(node.data);
+            node = node.next;
+        }
+        return tasks;
+    }
 
-    public List<Task> getBrowsingHistory() {
-        return browsingHistory;
+    private void removeNode(Node<Task> node) {
+        if(node != null) {
+            if(node.prev != null){
+                node.prev.next = node.next;
+            } else {
+                node.next.prev = null;
+                first = node.next;
+            }
+
+            if (node.next != null) {
+                node.next.prev = node.prev;
+            } else {
+                node.prev.next = null;
+                last = node.prev;
+            }
+        }
+    }
+
+    private static class Node<T extends Task> { // != скопировал из класса LinkedList
+        public Task data;
+        public Node<T> next;
+        public Node<T> prev;
+
+        public Node(Node<T> prev, T data, Node<T> next) {
+            this.data = data;
+            this.next = next;
+            this.prev = prev;
+        }
     }
 
     @Override
     public void addTask(Task task) {
-        if (browsingHistory.size() == BROWSING_HISTORY_MAX_SIZE) { // если 10 = 10
-            browsingHistory.remove(BROWSING_HISTORY_MAX_SIZE - 1); // стало 9
-        }
-        browsingHistory.add(0, task); // снова стало 10
+        removeTask(task.getId());
+        linkLast(task);
+        browsingHistory.put(task.getId(), last);
+    }
+
+    @Override
+    public void removeTask(int id) {
+        Node<Task> node = browsingHistory.get(id);
+        removeNode(node);
+        browsingHistory.remove(id);
     }
 
     @Override
     public List<Task> getHistory() {
-        return browsingHistory;
+        return new ArrayList<>(getTasks());
     }
 }
