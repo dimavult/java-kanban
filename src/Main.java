@@ -1,33 +1,44 @@
-import interfaces.TaskManager;
+import service.InMemoryTaskManager;
 import service.Managers;
 import task.Epic;
 import task.SubTask;
+import task.Task;
 import task.Status;
 
 public class Main {
     public static void main(String[] args) {
-        TaskManager manager = Managers.getDefault();
+        Managers.getDefault().addNewEpic(new Epic("--", "--"));
+        Managers.getDefault().addNewSubTask(new SubTask("--", "--", Status.NEW, 1));//Добавляем сабтаски по epicID
+        Managers.getDefault().addNewSubTask(new SubTask("--", "--", Status.DONE, 1));
+        Managers.getDefault().addNewEpic(new Epic("--", "--"));
+        Managers.getDefault().addNewSubTask(new SubTask("--", "--", Status.DONE, 4));
+        Managers.getDefault().addNewSubTask(new SubTask("--", "--", Status.DONE, 4));
+        Managers.getDefault().addNewSubTask(new SubTask("--", "--", Status.NEW, 4));
 
-        manager.addNewEpic(new Epic("--", "--"));
-        manager.addNewSubTask(new SubTask("--", "--", Status.NEW, 1));//Добавляем сабтаски по epicID
-        manager.addNewSubTask(new SubTask("--", "--", Status.DONE, 1));
-        manager.addNewEpic(new Epic("--", "--"));
-        manager.addNewSubTask(new SubTask("--", "--", Status.DONE, 4));
-        manager.addNewSubTask(new SubTask("--", "--", Status.DONE, 4));
-        manager.addNewSubTask(new SubTask("--", "--", Status.NEW, 4));
+        Managers.getDefault().getEpicById(1);
+        Managers.getDefault().getEpicById(4);
+        Managers.getDefault().getSubTaskById(2);
+        Managers.getDefault().getSubTaskById(3);
+        Managers.getDefault().getSubTaskById(5);
+        Managers.getDefault().getSubTaskById(6);
+        Managers.getDefault().getSubTaskById(7);
+        Managers.getDefault().getEpicById(1);
+        Managers.getDefault().removeSubTaskByIdentifier(5);
+        Managers.getDefault().removeEpicByIdentifier(1);
 
-        manager.getEpicById(1);
-        manager.getEpicById(4);
-        manager.getSubTaskById(2);
-        manager.getSubTaskById(3);
-        manager.getSubTaskById(5);
-        manager.getSubTaskById(6);
-        manager.getSubTaskById(7);
-        manager.getEpicById(1);
-        manager.removeSubTaskByIdentifier(5);
-        manager.removeEpicByIdentifier(1);
+        System.out.println(Managers.getDefault().getHistory());
 
-        System.out.println(manager.getHistory());
 
+
+        int a = 1;
+        for (int i = 1; i <= 5000000; i++){
+            Managers.getDefault().addNewEpic(new Epic("O", "P"));
+            Managers.getDefault().getEpicById(a++);
+        }
+
+        final long startTime = System.nanoTime();
+        final long endTime = System.nanoTime();
+
+        System.out.println(endTime-startTime);
     }
 }
