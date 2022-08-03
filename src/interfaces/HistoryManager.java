@@ -1,9 +1,6 @@
 package interfaces;
 
-import service.InMemoryHistoryManager;
 import task.Task;
-
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public interface HistoryManager {
