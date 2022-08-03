@@ -3,11 +3,8 @@ package task;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Epic extends Task{ /*Изменил содержание Класса. Добавил конструктор для работы с вводом пользователя,
-                                  оставив второй конструктор для внутренней работы приложения.*/
-
+public class Epic extends Task{
     private ArrayList<Integer> subtaskIds = new ArrayList<>();
-
 
     public ArrayList<Integer> getSubtaskIds() {
         return subtaskIds;
