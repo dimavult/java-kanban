@@ -1,14 +1,15 @@
 package service;
 
+import interfaces.HistoryManager;
 import interfaces.TaskManager;
 import task.*;
-
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final HashMap<Integer, Epic> epics = new HashMap<>();
     private final HashMap<Integer, SubTask> subTasks = new HashMap<>();
+    private final HistoryManager history = Managers.getDefaultHistory();
 
     private int identifier = 1;
 
@@ -18,7 +19,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Task> getHistory() {
-        return Managers.getDefaultHistory().getHistory();
+        return history.getHistory();
     }
 
     //                                      МЕТОДЫ ПО ПОЛУЧЕНИЯ СПИСКА ЗАДАЧ ОПРЕДЕЛЕННОГО ТИПА
@@ -145,19 +146,19 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(int id) {
-        Managers.getDefaultHistory().addTask(tasks.get(id));
+        history.addTask(tasks.get(id));
         return tasks.getOrDefault(id, null);
     }
 
     @Override
     public Epic getEpicById(int id) {
-        Managers.getDefaultHistory().addTask(epics.get(id));
+        history.addTask(epics.get(id));
         return epics.getOrDefault(id, null);
     }
 
     @Override
     public SubTask getSubTaskById(int id) {
-        Managers.getDefaultHistory().addTask(subTasks.get(id));
+        history.addTask(subTasks.get(id));
         return subTasks.getOrDefault(id, null);
     }
 
@@ -166,7 +167,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeTaskByIdentifier(int id) {
         if (tasks.containsKey(id)) {
-            Managers.getDefaultHistory().removeTask(id);
+            history.removeTask(id);
             tasks.remove(id);
         } else {
             System.out.println("Задачи с таким ID нет в программе.");
@@ -177,10 +178,10 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeEpicByIdentifier(int id) {
         if (epics.containsKey(id)) {
             for (Integer integer : epics.get(id).getSubtaskIds()) {
-                Managers.getDefaultHistory().removeTask(integer);
+                history.removeTask(integer);
                 subTasks.remove(integer);
             }
-            Managers.getDefaultHistory().removeTask(id);
+            history.removeTask(id);
             epics.remove(id);
         }
     }
@@ -192,7 +193,7 @@ public class InMemoryTaskManager implements TaskManager {
             int epicsId = subTasks.get(id).getEpicsId();
 
             epics.get(epicsId).removeSubTaskId(id);
-            Managers.getDefaultHistory().removeTask(id);
+            history.removeTask(id);
             subTasks.remove(id);
 
             updateEpicStatus(epicsId);
