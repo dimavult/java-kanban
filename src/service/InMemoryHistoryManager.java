@@ -12,7 +12,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     private Node<Task> first;
     private Node<Task> last;
 
-    private void linkLast(Task task) { // != не скопировал из класса LinkedList
+    private void linkLast(Task task) {
         final Node<Task> l = last;
         final Node<Task> newNode = new Node<>(l, task, null);
         last = newNode;
@@ -50,7 +50,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
-    private static class Node<T extends Task> { // != скопировал из класса LinkedList
+    private static class Node<T extends Task> {
         public Task data;
         public Node<T> next;
         public Node<T> prev;
@@ -64,9 +64,11 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void addTask(Task task) {
-        removeTask(task.getId());
-        linkLast(task);
-        browsingHistory.put(task.getId(), last);
+        if (task != null) {
+            removeTask(task.getId());
+            linkLast(task);
+            browsingHistory.put(task.getId(), last);
+        }
     }
 
     @Override
@@ -78,6 +80,6 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public List<Task> getHistory() {
-        return new ArrayList<>(getTasks());
+        return getTasks();
     }
 }
