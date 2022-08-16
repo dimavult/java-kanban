@@ -24,13 +24,13 @@ public interface TaskManager{
     // МЕТОДЫ ПО ДОБАВЛЕНИЮ ЗАДАЧ
 
 
-    int addNewTask(Task task);
+    void addNewTask(Task task);
 
 
-    int addNewEpic(Epic epic);
+    void addNewEpic(Epic epic);
 
 
-    int addNewSubTask(SubTask subTask);
+    void addNewSubTask(SubTask subTask);
 
     // МЕТОДЫ ПО УДАЛЕНИЮ ВСЕХ ЗАДАЧ
 
