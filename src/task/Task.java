@@ -68,13 +68,11 @@ public class Task {/*Изменил содержание Класса. Доба�
 
     @Override
     public String toString(){
-        return "ID задачи - " + id + "\n  Тип задачи - " + getTaskType() + "\n  Название задачи: " + name +
-                "\n  Статус задачи: " + status +
-                "\n  Описание задачи: " + description;
+        return id + "," + getTaskType() + "," + name + "," + status + "," + description;
     }
 
-    public String getTaskType(){
-        return "задача";
+    public TaskType getTaskType(){
+        return TaskType.TASK;
     }
 
     @Override
