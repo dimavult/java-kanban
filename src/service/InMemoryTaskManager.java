@@ -9,7 +9,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final HashMap<Integer, Epic> epics = new HashMap<>();
     private final HashMap<Integer, SubTask> subTasks = new HashMap<>();
-    private final HistoryManager history = Managers.getDefaultHistory();
+    protected final HistoryManager history = Managers.getDefaultHistory();
 
     private int identifier = 1;
 
@@ -81,26 +81,23 @@ public class InMemoryTaskManager implements TaskManager {
     //                                   МЕТОДЫ ПО ДОБАВЛЕНИЮ ЗАДАЧ
 
     @Override
-    public int addNewTask(Task task) {
+    public void addNewTask(Task task) {
         task.setId(getIdAndIncrement());
         tasks.put(task.getId(), task);
-        return identifier - 1; // вернул ID добавленной задачи
     }
 
     @Override
-    public int addNewEpic(Epic epic) {
+    public void addNewEpic(Epic epic) {
         epic.setId(getIdAndIncrement());
         epics.put(epic.getId(), epic);
-        return identifier - 1; // вернул ID добавленной задачи
     }
 
     @Override
-    public int addNewSubTask(SubTask subTask) {
+    public void addNewSubTask(SubTask subTask) {
         int epicsId = subTask.getEpicsId();
 
         if (epics.get(epicsId) == null) {
             System.out.println("Эпика с указанным ID не существует.");
-            return 0;
         } else {
 
             subTask.setId(identifier);
@@ -108,7 +105,6 @@ public class InMemoryTaskManager implements TaskManager {
             subTasks.put(getIdAndIncrement(), subTask);
 
             updateEpicStatus(epicsId);
-            return identifier - 1; // вернул ID добавленной задачи
         }
     }
 
