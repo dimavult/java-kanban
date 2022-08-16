@@ -25,8 +25,8 @@ public class Epic extends Task{
     }
 
     @Override
-    public String getTaskType() {
-        return "эпик";
+    public TaskType getTaskType() {
+        return TaskType.EPIC;
     }
 
     public void removeSubTaskId(int id){
@@ -49,6 +49,6 @@ public class Epic extends Task{
 
     @Override
     public String toString() {
-        return super.toString() + "\n  ID подзадач эпика " + getSubtaskIds();
+        return super.toString();
     }
 }
