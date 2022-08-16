@@ -25,13 +25,13 @@ public class SubTask extends Task{
     }
 
     @Override
-    public String getTaskType() {
-        return "подзадача";
+    public TaskType getTaskType() {
+        return TaskType.SUBTASK;
     }
 
     @Override
     public String toString() {
-        return super.toString() + "\n  ID эпика " + epicsId;
+        return super.toString() + "," + epicsId;
     }
 
     @Override
