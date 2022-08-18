@@ -67,31 +67,35 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private static void addTasksBackFromFile(FileBackedTasksManager manager, String value){
-        Task task = manager.fromString(value);
+        if (value != null && manager != null) {
+            Task task = manager.fromString(value);
 
-        switch (task.getTaskType()) {
-            case TASK:
-                manager.addNewTask(task);
-                break;
-            case EPIC:
-                manager.addNewEpic((Epic) task);
-                break;
-            case SUBTASK:
-                manager.addNewSubTask((SubTask) task);
-                break;
+            switch (task.getTaskType()) {
+                case TASK:
+                    manager.addNewTask(task);
+                    break;
+                case EPIC:
+                    manager.addNewEpic((Epic) task);
+                    break;
+                case SUBTASK:
+                    manager.addNewSubTask((SubTask) task);
+                    break;
+            }
         }
     }
 
     private static void addHistoryBackFromFile(FileBackedTasksManager manager, String value){
-        List<Integer> history = historyFromString(value);
+        if (value != null && manager != null) {
+            List<Integer> history = historyFromString(value);
 
-        for (Integer id: history) {
-            if (manager.getTasks().containsKey(id)) {
-                manager.getTaskById(id);
-            } else if (manager.getEpics().containsKey(id)){
-                manager.getEpicById(id);
-            } else if(manager.getSubTasks().containsKey(id)){
-                manager.getSubTaskById(id);
+            for (Integer id : history) {
+                if (manager.getTasks().containsKey(id)) {
+                    manager.getTaskById(id);
+                } else if (manager.getEpics().containsKey(id)) {
+                    manager.getEpicById(id);
+                } else if (manager.getSubTasks().containsKey(id)) {
+                    manager.getSubTaskById(id);
+                }
             }
         }
     }
