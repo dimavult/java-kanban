@@ -7,9 +7,8 @@ import task.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     public FileBackedTasksManager(File file) {
@@ -21,28 +20,79 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
+//    public static FileBackedTasksManager loadFromFile(File file) {
+//        if (file != null) {
+//            FileBackedTasksManager manager = new FileBackedTasksManager(file);
+//            try {
+//                String text = Files.readString(Path.of(file.getAbsolutePath()));
+//                String[] lines = text.split("\n");
+//
+//                if (!lines[lines.length-2].isEmpty()) {
+//                    for (int i = 1; i < lines.length-3; i++) {
+//                        manager.fromString(lines[i]);
+//                    }
+//                    List<Integer> ids = historyFromString(lines[lines.length-1]);
+//                }
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            return manager;
+//        } else {
+//            return null;
+//        }
+//    }
+
     public static FileBackedTasksManager loadFromFile(File file) {
         if (file != null) {
             FileBackedTasksManager manager = new FileBackedTasksManager(file);
-            try {
-                String text = Files.readString(Path.of(file.getAbsolutePath()));
-                String[] lines = text.split("\n");
-                if (!lines[lines.length - 2].isEmpty()) {
-                    for (int i = 1; i < lines.length; i++) {
-                        manager.fromString(lines[i]);
+
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                reader.readLine();
+                while (reader.ready()) {
+                    String text = reader.readLine();
+                    if (!text.isEmpty()) {
+                        addTasksBackFromFile(manager, text);
+                    } else if (text.isBlank()) {
+                        addHistoryBackFromFile(manager, reader.readLine());
                     }
                 }
-
-                if (!manager.getHistory().isEmpty()) {
-                    historyFromString(lines[lines.length - 1]);
-                }
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
             return manager;
         } else {
             return null;
+        }
+    }
+
+    private static void addTasksBackFromFile(FileBackedTasksManager manager, String value){
+        Task task = manager.fromString(value);
+
+        switch (task.getTaskType()) {
+            case TASK:
+                manager.addNewTask(task);
+                break;
+            case EPIC:
+                manager.addNewEpic((Epic) task);
+                break;
+            case SUBTASK:
+                manager.addNewSubTask((SubTask) task);
+                break;
+        }
+    }
+
+    private static void addHistoryBackFromFile(FileBackedTasksManager manager, String value){
+        List<Integer> history = historyFromString(value);
+
+        for (Integer id: history) {
+            if (manager.getTasks().containsKey(id)) {
+                manager.getTaskById(id);
+            } else if (manager.getEpics().containsKey(id)){
+                manager.getEpicById(id);
+            } else if(manager.getSubTasks().containsKey(id)){
+                manager.getSubTaskById(id);
+            }
         }
     }
 
@@ -68,41 +118,52 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private void save() {
-        try (Writer writer = new BufferedWriter(new FileWriter("data.txt"))){
+        try (Writer writer = new BufferedWriter(new FileWriter("data.txt"))) {
 
             writer.write("id,type,name,status,description,epic\n");
 
-            for (Task task: sortTasksToList()){
+            for (Task task : sortTasksToList()) {
                 writer.write(task.toString() + "\n");
             }
 
-            writer.write("\n");
-            writer.write(historyToString(history));
-        } catch (IOException exp){
+            if (!history.getHistory().isEmpty()) {
+                writer.write("\n");
+                writer.write(historyToString(history));
+            }
+        } catch (IOException exp) {
             exp.printStackTrace();
             throw new ManagerSaveException(exp.getMessage());
         }
     }
 
-    private static String historyToString(HistoryManager manager){
+    private static String historyToString(HistoryManager manager) {
         StringBuilder history = new StringBuilder();
 
-        for (Task task: manager.getHistory()){
-            history.append(task.getId()).append(",");
+        for (int i = 0; i < manager.getHistory().size(); i++) {
+            Task task = manager.getHistory().get(i);
+            if (manager.getHistory().size() - 1 == i) {
+                history.append(task.getId());
+            } else {
+                history.append(task.getId()).append(",");
+            }
         }
         return history.toString();
     }
 
-    private static List<Integer> historyFromString(String value){
-        List<Integer> historyIds = new ArrayList<>();
-        String[] ids = value.split(",");
-        for (String line: ids){
-            historyIds.add(Integer.parseInt(line));
+    private static List<Integer> historyFromString(String value) {
+        if (value != null) {
+            List<Integer> historyIds = new ArrayList<>();
+            String[] ids = value.split(",");
+            for (String line : ids) {
+                historyIds.add(Integer.parseInt(line));
+            }
+            return historyIds;
+        } else {
+            return null;
         }
-        return historyIds;
     }
 
-    private Task fromString(String value){
+    private Task fromString(String value) {
         String[] partsOfLine = value.split(",");
         int id = Integer.parseInt(partsOfLine[0]);
         String type = partsOfLine[1];
@@ -112,7 +173,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         int epicId = 0;
         Task task = null;
 
-        if(partsOfLine.length == 6){
+        if (partsOfLine.length == 6) {
             epicId = Integer.parseInt(partsOfLine[5]);
         }
         switch (type) {
@@ -127,31 +188,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 break;
         }
         return task;
-    }
-
-    @Override
-    public List<Task> getHistory() {
-        return super.getHistory();
-    }
-
-    @Override
-    public List<Task> getTasksList() {
-        return super.getTasksList();
-    }
-
-    @Override
-    public List<Epic> getEpicsList() {
-        return super.getEpicsList();
-    }
-
-    @Override
-    public List<SubTask> getSubTasksList() {
-        return super.getSubTasksList();
-    }
-
-    @Override
-    public List<SubTask> getAllEpicsSubtasks(int epicId) {
-        return super.getAllEpicsSubtasks(epicId);
     }
 
     @Override
