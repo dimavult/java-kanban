@@ -20,29 +20,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-//    public static FileBackedTasksManager loadFromFile(File file) {
-//        if (file != null) {
-//            FileBackedTasksManager manager = new FileBackedTasksManager(file);
-//            try {
-//                String text = Files.readString(Path.of(file.getAbsolutePath()));
-//                String[] lines = text.split("\n");
-//
-//                if (!lines[lines.length-2].isEmpty()) {
-//                    for (int i = 1; i < lines.length-3; i++) {
-//                        manager.fromString(lines[i]);
-//                    }
-//                    List<Integer> ids = historyFromString(lines[lines.length-1]);
-//                }
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            return manager;
-//        } else {
-//            return null;
-//        }
-//    }
-
     public static FileBackedTasksManager loadFromFile(File file) {
         if (file != null) {
             FileBackedTasksManager manager = new FileBackedTasksManager(file);
