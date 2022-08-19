@@ -14,7 +14,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public FileBackedTasksManager(File file) {
     }
 
-    private static class TaskComparator implements Comparator<Task> { //
+    private static class TaskComparator implements Comparator<Task> {
         public int compare(Task task1, Task task2) {
             return task1.getId() - task2.getId();
         }
