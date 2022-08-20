@@ -35,7 +35,7 @@ public class InMemoryTaskManager implements TaskManager {
         return history.getHistory();
     }
 
-    //                                      МЕТОДЫ ПО ПОЛУЧЕНИЯ СПИСКА ЗАДАЧ ОПРЕДЕЛЕННОГО ТИПА
+    // МЕТОДЫ ПО ПОЛУЧЕНИЯ СПИСКА ЗАДАЧ ОПРЕДЕЛЕННОГО ТИПА
 
     @Override
     public List<Task> getTasksList() {
@@ -77,7 +77,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
 
-    //                                  ПОЛУЧЕНИЕ ВСЕХ САБТАСКОВ НУЖНОГО ЭПИКА
+    // ПОЛУЧЕНИЕ ВСЕХ САБТАСКОВ НУЖНОГО ЭПИКА
 
     @Override
     public List<SubTask> getAllEpicsSubtasks(int epicId) {
@@ -91,7 +91,7 @@ public class InMemoryTaskManager implements TaskManager {
         return subTasksWithCurrentEpicId;
     }
 
-    //                                   МЕТОДЫ ПО ДОБАВЛЕНИЮ ЗАДАЧ
+    // МЕТОДЫ ПО ДОБАВЛЕНИЮ ЗАДАЧ
 
     @Override
     public void addNewTask(Task task) {
@@ -121,37 +121,48 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    //                                      МЕТОДЫ ПО УДАЛЕНИЮ ВСЕХ ЗАДАЧ
+    // МЕТОДЫ ПО УДАЛЕНИЮ ВСЕХ ЗАДАЧ
 
     @Override
     public void removeAllTasks() {
+        for (Task task: tasks.values()){
+            history.removeTask(task.getId());
+        }
         tasks.clear();
     }
 
     @Override
     public void removeAllEpics() {
+        for (Epic epic: epics.values()){
+            history.removeTask(epic.getId());
+        }
+        for (SubTask subTask: subTasks.values()){
+            history.removeTask(subTask.getId());
+        }
         epics.clear();
         subTasks.clear();
     }
 
     @Override
-    public void removeAllSubTasks() { // При удалении всех сабтасок, статусы всех эпиков сетятся на NEW
+    public void removeAllSubTasks() {
         HashSet<Integer> epicsIds = new HashSet<>();
 
         for (Integer integer : subTasks.keySet()) {
             epicsIds.add(subTasks.get(integer).getEpicsId());
         }
-
+        for (SubTask subTask: subTasks.values()){
+            history.removeTask(subTask.getId());
+        }
         subTasks.clear();
 
         for (Integer integer : epicsIds) {
-            epics.get(integer).getSubtaskIds().clear();// почистил список сабтасок
-            updateEpicStatus(integer);// обнвил его статус на NEW
+            epics.get(integer).getSubtaskIds().clear();
+            updateEpicStatus(integer);
         }
 
     }
 
-    //                            МЕТОДЫ ДЛЯ ПОЛУЧЕНИЯ ИНФОРМАЦИИ О ЗАДАЧЕ ПО ИДЕНТИФИКАТОРУ
+    // МЕТОДЫ ДЛЯ ПОЛУЧЕНИЯ ИНФОРМАЦИИ О ЗАДАЧЕ ПО ИДЕНТИФИКАТОРУ
 
     @Override
     public Task getTaskById(int id) {
@@ -171,7 +182,7 @@ public class InMemoryTaskManager implements TaskManager {
         return subTasks.getOrDefault(id, null);
     }
 
-    //                            МЕТОДЫ ДЛЯ УДАЛЕНИЯ ЗАДАЧ ПО ИДЕНТИФИКАТОРУ
+    // МЕТОДЫ ДЛЯ УДАЛЕНИЯ ЗАДАЧ ПО ИДЕНТИФИКАТОРУ
 
     @Override
     public void removeTaskByIdentifier(int id) {
@@ -211,7 +222,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    //                              МЕТОДЫ ДЛЯ ОБНОВЛЕНИЯ ЗАДАЧИ ПО ИДЕНТИФИКАТОРУ
+    // МЕТОДЫ ДЛЯ ОБНОВЛЕНИЯ ЗАДАЧИ ПО ИДЕНТИФИКАТОРУ
 
     @Override
     public void updateTask(Task task) {
