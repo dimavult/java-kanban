@@ -11,27 +11,41 @@ import java.io.File;
 
 public class Main {
     public static void main(String[] args) {
-        FileBackedTasksManager manager = FileBackedTasksManager.loadFromFile(new File("data.txt"));
-//        FileBackedTasksManager manager = new FileBackedTasksManager(new File("data.txt"));
-//
-//        manager.addNewEpic(new Epic("--", "--"));
-//        manager.addNewSubTask(new SubTask("--", "--", Status.NEW, 1));
-//        manager.addNewSubTask(new SubTask("--", "--", Status.DONE, 1));
-//        manager.addNewEpic(new Epic("--", "--"));
-//        manager.addNewSubTask(new SubTask("--", "--", Status.DONE, 4));
-//        manager.addNewSubTask(new SubTask("--", "--", Status.DONE, 4));
-//        manager.addNewSubTask(new SubTask("--", "--", Status.NEW, 4));
-//
-//        manager.getEpicById(1);
-//        manager.getEpicById(4);
-//        manager.getSubTaskById(2);
-//        manager.getSubTaskById(3);
-//        manager.getSubTaskById(5);
-//        manager.getSubTaskById(6);
-//        manager.getSubTaskById(7);
+        FileBackedTasksManager managerOld = new FileBackedTasksManager(new File("data.txt"));
 
-        System.out.println(manager.getHistory());
-//        System.out.println(manager.getEpicById(1));
-//        System.out.println(manager.getHistory());
+        managerOld.addNewEpic(new Epic("--", "--"));
+        managerOld.addNewSubTask(new SubTask("--", "--", Status.NEW, 1));
+        managerOld.addNewSubTask(new SubTask("--", "--", Status.DONE, 1));
+        managerOld.addNewEpic(new Epic("--", "--"));
+        managerOld.addNewSubTask(new SubTask("--", "--", Status.DONE, 4));
+        managerOld.addNewSubTask(new SubTask("--", "--", Status.DONE, 4));
+        managerOld.addNewSubTask(new SubTask("--", "--", Status.NEW, 4));
+
+        System.out.println(managerOld.getEpicById(1));
+        managerOld.getEpicById(4);
+        managerOld.getSubTaskById(2);
+        managerOld.getSubTaskById(3);
+        managerOld.getSubTaskById(5);
+        managerOld.getSubTaskById(6);
+        managerOld.getSubTaskById(7);
+
+        System.out.println(managerOld.getHistory());
+        System.out.println(managerOld.getTasksList());
+        System.out.println(managerOld.getEpicsList());
+        System.out.println(managerOld.getSubTasksList());
+        System.out.println(managerOld.getEpicById(1));
+        System.out.println(managerOld.getHistory());
+        managerOld.removeAllSubTasks();
+        System.out.println("--------------------------");
+
+        FileBackedTasksManager managerNew = FileBackedTasksManager.loadFromFile(new File("data.txt"));
+
+        System.out.println(managerNew.getHistory());
+        System.out.println(managerNew.getTasksList());
+        System.out.println(managerNew.getEpicsList());
+        System.out.println(managerNew.getSubTasksList());
+        System.out.println(managerNew.getEpicById(4));
+        System.out.println(managerNew.getHistory());
+
     }
 }
