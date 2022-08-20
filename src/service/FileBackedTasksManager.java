@@ -5,13 +5,15 @@ import interfaces.HistoryManager;
 import task.*;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
+    private final Path path;
+
     public FileBackedTasksManager(File file) {
+        this.path = file.toPath();
     }
 
     private static class TaskComparator implements Comparator<Task> {
@@ -21,7 +23,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static FileBackedTasksManager loadFromFile(File file) {
-        if (file != null) {
+        if (file.exists()) {
             FileBackedTasksManager manager = new FileBackedTasksManager(file);
 
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
@@ -39,6 +41,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
             return manager;
         } else {
+            System.out.println("Файл не найден. Создайте файл путем создания задач.");
             return null;
         }
     }
@@ -99,7 +102,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private void save() {
-        try (Writer writer = new BufferedWriter(new FileWriter("data.txt"))) {
+        try (Writer writer = new BufferedWriter(new FileWriter(path.toString()))) {
 
             writer.write("id,type,name,status,description,epic\n");
 
