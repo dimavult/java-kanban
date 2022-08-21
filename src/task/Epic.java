@@ -20,9 +20,9 @@ public class Epic extends Task{
         subtaskIds = new ArrayList<>();
     }
 
-    public Epic(String name, String description, int id) {
+    public Epic(String name, String description, int id, Status status) {
         super(name, description, id);
-        this.status = Status.NEW;
+        this.status = status;
     }
 
     @Override
