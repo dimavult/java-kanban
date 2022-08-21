@@ -52,16 +52,25 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
             switch (task.getTaskType()) {
                 case TASK:
-                    manager.addNewTask(task);
+                    manager.tasks.put(task.getId(), task);
                     break;
                 case EPIC:
-                    manager.addNewEpic((Epic) task);
+                    manager.epics.put(task.getId(), (Epic) task);
                     break;
                 case SUBTASK:
-                    manager.addNewSubTask((SubTask) task);
+                    manager.subTasks.put(task.getId(), (SubTask) task);
                     break;
             }
         }
+    }
+
+    private  Map<Integer, Task> getAllTasks(){
+        Map<Integer, Task> allTasks = new HashMap<>();
+        allTasks.putAll(tasks);
+        allTasks.putAll(epics);
+        allTasks.putAll(subTasks);
+
+        return allTasks;
     }
 
     private static void addHistoryBackFromFile(FileBackedTasksManager manager, String value){
@@ -69,13 +78,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             List<Integer> history = historyFromString(value);
 
             for (Integer id : history) {
-                if (manager.getTasks().containsKey(id)) {
-                    manager.getTaskById(id);
-                } else if (manager.getEpics().containsKey(id)) {
-                    manager.getEpicById(id);
-                } else if (manager.getSubTasks().containsKey(id)) {
-                    manager.getSubTaskById(id);
-                }
+                Task task = manager.getAllTasks().get(id);
+                manager.history.addTask(task);
             }
         }
     }
@@ -152,7 +156,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         int id = Integer.parseInt(partsOfLine[0]);
         String type = partsOfLine[1];
         String name = partsOfLine[2];
-        String status = partsOfLine[3];
+        Status status = Status.valueOf(partsOfLine[3]);
         String description = partsOfLine[4];
         int epicId = 0;
         Task task = null;
@@ -162,13 +166,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         switch (type) {
             case "TASK":
-                task = new Task(name, description, Status.valueOf(status), id);
+                task = new Task(name, description, status, id);
                 break;
             case "EPIC":
-                task = new Epic(name, description, id);
+                task = new Epic(name, description, id, status);
                 break;
             case "SUBTASK":
-                task = new SubTask(name, description, Status.valueOf(status), id, epicId);
+                task = new SubTask(name, description, status, id, epicId);
                 break;
         }
         return task;
