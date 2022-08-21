@@ -1,10 +1,6 @@
-import interfaces.TaskManager;
 import service.FileBackedTasksManager;
-import service.InMemoryTaskManager;
-import service.Managers;
 import task.Epic;
 import task.SubTask;
-import task.Task;
 import task.Status;
 
 import java.io.File;
@@ -35,7 +31,6 @@ public class Main {
         System.out.println(managerOld.getSubTasksList());
         System.out.println(managerOld.getEpicById(1));
         System.out.println(managerOld.getHistory());
-        managerOld.removeAllSubTasks();
         System.out.println("--------------------------");
 
         FileBackedTasksManager managerNew = FileBackedTasksManager.loadFromFile(new File("data.txt"));
