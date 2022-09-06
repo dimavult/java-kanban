@@ -6,6 +6,8 @@ import task.*;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -14,12 +16,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public FileBackedTasksManager(File file) {
         this.path = file.toPath();
-    }
-
-    private static class TaskComparator implements Comparator<Task> {
-        public int compare(Task task1, Task task2) {
-            return task1.getId() - task2.getId();
-        }
     }
 
     public static FileBackedTasksManager loadFromFile(File file) {
@@ -36,6 +32,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         addHistoryBackFromFile(manager, reader.readLine());
                     }
                 }
+                addPrioritizedTasksBackFromFile(manager);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -43,6 +40,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         } else {
             System.out.println("Файл не найден. Создайте файл путем создания задач.");
             return null;
+        }
+    }
+
+    private static void addPrioritizedTasksBackFromFile(FileBackedTasksManager manager) {
+        if (manager.getTasksList() != null) {
+            manager.prioritizedTasks.addAll(manager.getTasksList());
+        }
+        if (manager.getSubTasksList() != null) {
+            manager.prioritizedTasks.addAll(manager.getSubTasksList());
         }
     }
 
@@ -77,15 +83,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         if (value != null && manager != null) {
             List<Integer> history = historyFromString(value);
 
-            for (Integer id : history) {
-                Task task = manager.getAllTasks().get(id);
+            history.forEach(integer -> {
+                Task task = manager.getAllTasks().get(integer);
                 manager.history.addTask(task);
-            }
+            });
         }
     }
 
     private List<Task> sortTasksToList() {
-        var comparator = new TaskComparator();
         List<Task> sortedList = new ArrayList<>();
 
         if (getTasksList() != null) {
@@ -100,7 +105,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             sortedList.addAll(getSubTasksList());
         }
 
-        sortedList.sort(comparator);
+        sortedList.sort(Comparator.comparingInt(Task::getId));
 
         return sortedList;
     }
@@ -108,7 +113,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private void save() {
         try (Writer writer = new BufferedWriter(new FileWriter(path.toString()))) {
 
-            writer.write("id,type,name,status,description,epic\n");
+            writer.write("id,type,name,status,description,startTime,duration,epic\n");
 
             for (Task task : sortTasksToList()) {
                 writer.write(task.toString() + "\n");
@@ -150,7 +155,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             return null;
         }
     }
-
+    /*
+    можно было, конечно, декомпозировать метод на три в зависимости от taskType, но я легких путей не ищу
+     */
     private Task fromString(String value) {
         String[] partsOfLine = value.split(",");
         int id = Integer.parseInt(partsOfLine[0]);
@@ -158,22 +165,56 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         String name = partsOfLine[2];
         Status status = Status.valueOf(partsOfLine[3]);
         String description = partsOfLine[4];
+        LocalDateTime startTime = null;
+        Duration duration = null;
         int epicId = 0;
-        Task task = null;
 
+        if (partsOfLine.length == 7) {// типа если больше 6, то точно есть и стартайм и продолжительность
+            startTime = LocalDateTime.parse(partsOfLine[5]);
+            duration = Duration.parse(partsOfLine[6]);
+        }
         if (partsOfLine.length == 6) {
             epicId = Integer.parseInt(partsOfLine[5]);
+        } else if (partsOfLine.length == 8) {
+            epicId = Integer.parseInt(partsOfLine[7]);
         }
-        switch (type) {
-            case "TASK":
-                task = new Task(name, description, status, id);
-                break;
-            case "EPIC":
-                task = new Epic(name, description, id, status);
-                break;
-            case "SUBTASK":
-                task = new SubTask(name, description, status, id, epicId);
-                break;
+
+        return addTaskBackFromFile(type, name, description, status, epicId, id, duration, startTime);
+    }
+
+    private static Task addTaskBackFromFile(String type,
+                                            String name,
+                                            String description,
+                                            Status status,
+                                            int epicId,
+                                            int id,
+                                            Duration duration,
+                                            LocalDateTime startTime) {
+        Task task = null;
+        if (startTime != null) {
+            switch (type) {
+                case "TASK":
+                    task = new Task(name, description, status, id, duration, startTime);
+                    break;
+                case "EPIC":
+                    task = new Epic(name, description, status, id, duration, startTime);
+                    break;
+                case "SUBTASK":
+                    task = new SubTask(name, description, status, id, epicId, duration, startTime);
+                    break;
+            }
+        } else {
+            switch (type) {
+                case "TASK":
+                    task = new Task(name, description, status, id);
+                    break;
+                case "EPIC":
+                    task = new Epic(name, description, id, status);
+                    break;
+                case "SUBTASK":
+                    task = new SubTask(name, description, status, id, epicId);
+                    break;
+            }
         }
         return task;
     }

@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface TaskManager{
 
+    List<Task> getPrioritizedTasks();
     List<Task> getHistory();
 
     // МЕТОДЫ ПО ПОЛУЧЕНИЯ СПИСКА ЗАДАЧ ОПРЕДЕЛЕННОГО ТИПА
