@@ -15,7 +15,6 @@ class HistoryManagerTest {
     }
 
     @Test
-
     void addTask() {
         assertEquals(0, manager.getHistory().size(), "history should be empty until addTask");
 
@@ -28,10 +27,9 @@ class HistoryManagerTest {
         manager.addTask(task2);
         manager.addTask(task3);
         manager.addTask(task4);
-        manager.addTask(task5);
+        assertThrows(RuntimeException.class, () -> manager.addTask(task5), "cant add task with null value" );;
 
         assertTrue(manager.getHistory().contains(task1), "task was not added to history");
-        assertFalse(manager.getHistory().contains(task5), "history shouldn't contain 'null' task");
 
         manager.addTask(task4);
         manager.addTask(task4);
