@@ -50,17 +50,18 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private boolean getIntersectionTestResult(Task inputTask) {
+        boolean isNotIntersection = true;
         if (inputTask.getDuration() != null && inputTask.getStartTime() != null) {
             for (Task taskFromSet : prioritizedTasks) {
                 if (taskFromSet.getStartTime() != null && taskFromSet.getDuration() != null) {
-                    return checkIntersection(inputTask, taskFromSet);
+                    isNotIntersection = hasNoIntersection(inputTask, taskFromSet);
                 }
             }
         }
-        return true;
+        return isNotIntersection;
     }
 
-    private boolean checkIntersection(Task inputTask, Task taskFromSet) {
+    private boolean hasNoIntersection(Task inputTask, Task taskFromSet) {
         LocalDateTime anotherStartTime = taskFromSet.getStartTime();
         LocalDateTime anotherEndTime = taskFromSet.getEndTime();
         LocalDateTime inputStartTime = inputTask.getStartTime();
@@ -309,7 +310,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateEpic(Epic epic) {
         int id = epic.getId();
 
-        if (epics.containsKey(id) && getIntersectionTestResult(epic)) {
+        if (epics.containsKey(id)) {
             epics.get(id).setName(epic.getName());
             epics.get(id).setDescription(epic.getDescription());
         } else {
