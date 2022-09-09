@@ -15,6 +15,11 @@ import java.io.File;
 
 public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
 
+    @Override
+    FileBackedTasksManager initManager() {
+        return new FileBackedTasksManager(file);
+    }
+
     File file = new File("tests.csv");
 
     @BeforeEach
