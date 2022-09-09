@@ -57,7 +57,7 @@ class EpicTest {
     }
 
     @Test
-    public void epicsStatusShouldBeDoneIfSubtasksAreInProgress(){
+    public void epicsStatusShouldBeInProgressIfSubtasksAreInProgress(){
         Epic epic = new Epic("--", "--");
         taskManager.addNewEpic(epic);
         taskManager.addNewSubTask(new SubTask("--", "--", Status.IN_PROGRESS, 1, Duration.ofHours(2), LocalDateTime.of(2022, Month.AUGUST, 30, 19, 3)));
