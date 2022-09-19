@@ -1,6 +1,5 @@
 package service;
 
-import com.sun.source.tree.IfTree;
 import interfaces.HistoryManager;
 import interfaces.TaskManager;
 import task.*;
@@ -10,11 +9,11 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    protected final HashMap<Integer, Task> tasks = new HashMap<>();
-    protected final HashMap<Integer, Epic> epics = new HashMap<>();
-    protected final HashMap<Integer, SubTask> subTasks = new HashMap<>();
-    protected final HistoryManager history = Managers.getDefaultHistory();
-    protected final TreeSet<Task> prioritizedTasks = new TreeSet<>((task1, task2) -> {
+    protected Map<Integer, Task> tasks = new HashMap<>();
+    protected Map<Integer, Epic> epics = new HashMap<>();
+    protected Map<Integer, SubTask> subTasks = new HashMap<>();
+    protected HistoryManager history = Managers.getDefaultHistory();
+    protected TreeSet<Task> prioritizedTasks = new TreeSet<>((task1, task2) -> {
         if (task1.getStartTime() == null && task2.getStartTime() == null) {
             return -1;
         } else if (task1.getStartTime() == null) {
@@ -28,15 +27,15 @@ public class InMemoryTaskManager implements TaskManager {
 
     private int identifier = 1;
 
-    protected HashMap<Integer, Task> getTasks() {
+    protected Map<Integer, Task> getTasks() {
         return tasks;
     }
 
-    protected HashMap<Integer, Epic> getEpics() {
+    protected Map<Integer, Epic> getEpics() {
         return epics;
     }
 
-    protected HashMap<Integer, SubTask> getSubTasks() {
+    protected Map<Integer, SubTask> getSubTasks() {
         return subTasks;
     }
 
@@ -79,7 +78,16 @@ public class InMemoryTaskManager implements TaskManager {
         return new ArrayList<>(prioritizedTasks);
     }
 
-    // МЕТОДЫ ПО ПОЛУЧЕНИЯ СПИСКА ЗАДАЧ ОПРЕДЕЛЕННОГО ТИПА
+    // МЕТОДЫ ПО ПОЛУЧЕНИЯ СПИСКА ЗАДАЧ
+
+    @Override
+    public List<Task> getAllTasksList() {
+        List<Task> allTasks = new ArrayList<>();
+        allTasks.addAll(getTasksList());
+        allTasks.addAll(getSubTasksList());
+        allTasks.addAll(getEpicsList());
+        return allTasks;
+    }
 
     @Override
     public List<Task> getTasksList() {

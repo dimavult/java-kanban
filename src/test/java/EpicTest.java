@@ -2,6 +2,7 @@ import interfaces.TaskManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import service.InMemoryTaskManager;
 import service.Managers;
 import task.Epic;
 import task.Status;
@@ -19,7 +20,7 @@ class EpicTest {
 
     @BeforeEach
     public void createManager(){
-        taskManager = Managers.getDefault();
+        taskManager = new InMemoryTaskManager();
     }
 
     @Test

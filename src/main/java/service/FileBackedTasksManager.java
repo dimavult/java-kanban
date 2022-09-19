@@ -12,7 +12,10 @@ import java.util.*;
 
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private final Path path;
+    private Path path;
+
+    public FileBackedTasksManager() {
+    }
 
     public FileBackedTasksManager(File file) {
         this.path = file.toPath();
@@ -110,7 +113,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return sortedList;
     }
 
-    private void save() {
+    protected void save() {
         try (Writer writer = new BufferedWriter(new FileWriter(path.toString()))) {
 
             writer.write("id,type,name,status,description,startTime,duration,epic\n");

@@ -1,10 +1,13 @@
 import interfaces.TaskManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import server.KVServer;
 import service.InMemoryTaskManager;
 import task.*;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -16,6 +19,18 @@ import static org.junit.jupiter.api.Assertions.*;
 abstract class TaskManagerTest<T extends TaskManager> {
     public T taskManager;
     abstract T initManager();
+    public KVServer kvServer;
+
+    @AfterEach
+    protected void stopServ() {
+        kvServer.stop();
+    }
+
+    @BeforeEach
+    protected void startKV() throws IOException {
+        kvServer = new KVServer();
+        kvServer.start();
+    }
 
     @BeforeEach
     protected void setUp() {
@@ -108,9 +123,10 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     @DisplayName("getting a list of tasks")
     public void getTasksList() {
-        Task task = new Task("--", "--", Status.DONE);
+        Task task = new Task("task", "taskk", Status.DONE, Duration.ofMinutes(30),
+                LocalDateTime.of(3000, 9, 12, 12, 0));
         taskManager.addNewTask(task);
-        assertEquals(task, taskManager.getTasksList().get(4), "tasks are not equal");
+        assertTrue(taskManager.getTasksList().contains(task), "no required task");
         assertEquals(5, taskManager.getTasksList().size(), "wrong number of tasks");
         taskManager.removeAllTasks();
         assertNull(taskManager.getTasksList(), "the list of tasks isn't empty");
@@ -121,7 +137,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     public void getEpicsList() {
         Epic task = new Epic("--", "--");
         taskManager.addNewEpic(task);
-        assertEquals(task, taskManager.getEpicsList().get(2), "Epics are not equal");
+        assertTrue(taskManager.getEpicsList().contains(task), "no required epic");
         assertEquals(3, taskManager.getEpicsList().size(), "wrong number of Epics");
         taskManager.removeAllEpics();
         assertNull(taskManager.getEpicsList(), "the list of Epics isn't empty");
@@ -132,7 +148,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     public void getSubTasksList() {
         SubTask task = new SubTask("--", "--", Status.DONE, 1);
         taskManager.addNewSubTask(task);
-        assertEquals(task, taskManager.getSubTasksList().get(5), "SubTasks are not equal");
+        assertTrue(taskManager.getSubTasksList().contains(task), "no required subtask");
         assertEquals(6, taskManager.getSubTasksList().size(), "wrong number of SubTasks");
         taskManager.removeAllSubTasks();
         assertNull(taskManager.getSubTasksList(), "the list of SubTasks isn't empty");

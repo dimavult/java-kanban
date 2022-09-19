@@ -26,6 +26,10 @@ public class Epic extends Task{
         subtaskIds.add(id);
     }
 
+    public void setSubtaskIds(ArrayList<Integer> subtaskIds) {
+        this.subtaskIds = subtaskIds;
+    }
+
     public Epic(String name, String description) {
         super(name, description);
         this.status = Status.NEW;

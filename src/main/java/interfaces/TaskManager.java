@@ -11,6 +11,8 @@ public interface TaskManager{
 
     // МЕТОДЫ ПО ПОЛУЧЕНИЯ СПИСКА ЗАДАЧ ОПРЕДЕЛЕННОГО ТИПА
 
+    List<Task> getAllTasksList();
+
     List<Task> getTasksList();
 
     List<Epic> getEpicsList();

@@ -1,6 +1,4 @@
-import service.FileBackedTasksManager;
 import service.InMemoryTaskManager;
-
 
 class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
