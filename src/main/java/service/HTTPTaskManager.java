@@ -42,7 +42,7 @@ public class HTTPTaskManager extends FileBackedTasksManager{
                 new TypeToken<Map<Integer, Epic>>(){}.getType());
         Map<Integer, SubTask> subtaskMap = gson.fromJson(client.load("subtask"),
                 new TypeToken<Map<Integer, SubTask>>(){}.getType());
-        List<Task> historyManager = gson.fromJson(client.load("history"),
+        List<Task> historyList = gson.fromJson(client.load("history"),
                 new TypeToken<List<Task>>(){}.getType());
 
         if (taskMap != null) {
@@ -54,8 +54,8 @@ public class HTTPTaskManager extends FileBackedTasksManager{
             subTasks.putAll(subtaskMap);
             prioritizedTasks.addAll(subTasks.values());
         }
-        if (historyManager != null) {
-            historyManager.forEach(task -> {
+        if (historyList != null) {
+            historyList.forEach(task -> {
                 TaskType type = task.getTaskType();
                 int id = task.getId();
                 switch (type){
@@ -67,6 +67,7 @@ public class HTTPTaskManager extends FileBackedTasksManager{
                         break;
                     case SUBTASK:
                         getSubTaskById(id);
+                        break;
                     default:
                         System.out.println("Incorrect task type");
                 }
