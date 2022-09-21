@@ -1,5 +1,7 @@
 package server;
 
+import exception.HandlerRequestException;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -28,6 +30,10 @@ public class KVTaskClient {
             HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
             HttpResponse<String> send = httpClient.send(request, handler);
 
+            if(send.statusCode() != 200) {
+                throw new HandlerRequestException("Запрос не был обработан. Код ответ: " + send.statusCode());
+            }
+
             return send.body();
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException("Ошибка регистрации.");
@@ -45,10 +51,10 @@ public class KVTaskClient {
                     .build();
             HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
             HttpResponse<String> send = httpClient.send(request, handler);
-            /*
-            насколько понимаю, тут вообще не нужен Response
-             */
-            System.out.println(send.statusCode());
+
+            if(send.statusCode() != 200) {
+                throw new HandlerRequestException("Запрос не был обработан. Код ответ: " + send.statusCode());
+            }
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException("Ошибка регистрации.");
         }
@@ -65,6 +71,10 @@ public class KVTaskClient {
                     .build();
             HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
             HttpResponse<String> send = httpClient.send(request, handler);
+
+            if(send.statusCode() != 200) {
+                throw new HandlerRequestException("Запрос не был обработан. Код ответ: " + send.statusCode());
+            }
 
             return send.body();
         } catch (IOException | InterruptedException e) {
