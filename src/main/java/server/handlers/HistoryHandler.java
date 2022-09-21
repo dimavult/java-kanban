@@ -29,7 +29,7 @@ public class HistoryHandler implements HttpHandler {
         String[] splitString = path.split("/");
         String lastValue = splitString[splitString.length - 1];
 
-        if (!method.equals(ServerMethod.GET) || !lastValue.equals("history")) {
+        if (!ServerMethod.GET.equals(method) || !"history".equals(lastValue)) {
             httpExchange.sendResponseHeaders(400, 0);
             return;
         }
