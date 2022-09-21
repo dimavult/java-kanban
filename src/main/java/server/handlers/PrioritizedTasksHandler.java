@@ -29,7 +29,7 @@ public class PrioritizedTasksHandler implements HttpHandler {
         String[] splitString = path.split("/");
         String lastValue = splitString[splitString.length - 1];
 
-        if (!method.equals(ServerMethod.GET) || !lastValue.equals("tasks")) {
+        if (!ServerMethod.GET.equals(method) || !"tasks".equals(lastValue)) {
             httpExchange.sendResponseHeaders(400, 0);
             response = "Неверная команда";
         } else {
